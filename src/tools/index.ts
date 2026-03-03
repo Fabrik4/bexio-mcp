@@ -34,6 +34,7 @@ import * as purchase from "./purchase/index.js";
 import * as files from "./files/index.js";
 import * as payroll from "./payroll/index.js";
 import * as notes from "./notes/index.js";
+import * as tasks from "./tasks/index.js";
 
 // Type for handler functions
 export type HandlerFn = (
@@ -64,6 +65,7 @@ const allDefinitions: Tool[] = [
   ...users.toolDefinitions,      // 6 tools
   ...misc.toolDefinitions,       // 9 tools
   ...notes.toolDefinitions,      // 6 tools (list, get, create, update, delete, search)
+  ...tasks.toolDefinitions,      // 8 tools (list, get, create, update, delete, search, priorities, statuses)
 ];
 
 // Aggregate all handlers
@@ -89,6 +91,7 @@ const allHandlers: Record<string, HandlerFn> = {
   ...users.handlers,
   ...misc.handlers,
   ...notes.handlers,
+  ...tasks.handlers,
 };
 
 /** Get all tool definitions for registration */

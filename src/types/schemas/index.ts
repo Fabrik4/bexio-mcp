@@ -65,3 +65,6 @@ export * from "./payroll.js";
 
 // Notes (Notes attached to contacts, invoices, quotes, orders, etc.)
 export * from "./notes.js";
+
+// Tasks (Task management with optional resource linking)
+export * from "./tasks.js";

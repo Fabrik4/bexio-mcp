@@ -1550,4 +1550,37 @@ export class BexioClient {
   async searchNotes(criteria: Record<string, unknown>[], params: PaginationParams = {}): Promise<unknown[]> {
     return this.makeRequest("POST", "/note/search", params, criteria);
   }
+
+  // ===== TASKS (TASKS-01, TASKS-02) =====
+  async listTasks(params: Record<string, unknown> = {}): Promise<unknown[]> {
+    return this.makeRequest("GET", "/task", params);
+  }
+
+  async getTask(taskId: number): Promise<unknown> {
+    return this.makeRequest("GET", `/task/${taskId}`);
+  }
+
+  async createTask(data: Record<string, unknown>): Promise<unknown> {
+    return this.makeRequest("POST", "/task", undefined, data);
+  }
+
+  async updateTask(taskId: number, data: Record<string, unknown>): Promise<unknown> {
+    return this.makeRequest("POST", `/task/${taskId}`, undefined, data);
+  }
+
+  async deleteTask(taskId: number): Promise<unknown> {
+    return this.makeRequest("DELETE", `/task/${taskId}`);
+  }
+
+  async searchTasks(criteria: Record<string, unknown>[], params: PaginationParams = {}): Promise<unknown[]> {
+    return this.makeRequest("POST", "/task/search", params, criteria);
+  }
+
+  async listTaskPriorities(): Promise<unknown[]> {
+    return this.makeRequest("GET", "/task_priority");
+  }
+
+  async listTaskStatuses(): Promise<unknown[]> {
+    return this.makeRequest("GET", "/task_status");
+  }
 }
