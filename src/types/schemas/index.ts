@@ -74,3 +74,6 @@ export * from "./stock.js";
 
 // Document Settings (Document Settings, Document Templates)
 export * from "./docs.js";
+
+// Positions (Default, Item, Text, Subtotal, Discount, Pagebreak, Sub positions on sales documents)
+export * from "./positions.js";
