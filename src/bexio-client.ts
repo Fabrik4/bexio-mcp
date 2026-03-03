@@ -388,6 +388,34 @@ export class BexioClient {
     return this.makeRequest("POST", `/kb_order/${orderId}/create_invoice`);
   }
 
+  async editOrder(orderId: number, orderData: Record<string, unknown>): Promise<unknown> {
+    return this.makeRequest("POST", `/kb_order/${orderId}`, undefined, orderData);
+  }
+
+  async deleteOrder(orderId: number): Promise<unknown> {
+    return this.makeRequest("DELETE", `/kb_order/${orderId}`);
+  }
+
+  async getOrderPdf(orderId: number): Promise<unknown> {
+    const response = await this.client.get(`/kb_order/${orderId}/pdf`, {
+      responseType: "arraybuffer",
+    });
+    const base64 = Buffer.from(response.data).toString("base64");
+    return { content: base64, content_type: "application/pdf", filename: `order_${orderId}.pdf` };
+  }
+
+  async getOrderRepetition(orderId: number): Promise<unknown> {
+    return this.makeRequest("GET", `/kb_order/${orderId}/repetition`);
+  }
+
+  async editOrderRepetition(orderId: number, repetitionId: number, data: Record<string, unknown>): Promise<unknown> {
+    return this.makeRequest("POST", `/kb_order/${orderId}/repetition/${repetitionId}`, undefined, data);
+  }
+
+  async deleteOrderRepetition(orderId: number, repetitionId: number): Promise<unknown> {
+    return this.makeRequest("DELETE", `/kb_order/${orderId}/repetition/${repetitionId}`);
+  }
+
   // ===== CONTACTS =====
   async listContacts(params: ContactSearchParams = {}): Promise<unknown[]> {
     const searchParams: Record<string, unknown> = {
@@ -665,6 +693,26 @@ export class BexioClient {
 
   async copyInvoice(invoiceId: number): Promise<unknown> {
     return this.makeRequest("POST", `/kb_invoice/${invoiceId}/copy`);
+  }
+
+  async editInvoice(invoiceId: number, invoiceData: Record<string, unknown>): Promise<unknown> {
+    return this.makeRequest("POST", `/kb_invoice/${invoiceId}`, undefined, invoiceData);
+  }
+
+  async deleteInvoice(invoiceId: number): Promise<unknown> {
+    return this.makeRequest("DELETE", `/kb_invoice/${invoiceId}`);
+  }
+
+  async getInvoicePdf(invoiceId: number): Promise<unknown> {
+    const response = await this.client.get(`/kb_invoice/${invoiceId}/pdf`, {
+      responseType: "arraybuffer",
+    });
+    const base64 = Buffer.from(response.data).toString("base64");
+    return { content: base64, content_type: "application/pdf", filename: `invoice_${invoiceId}.pdf` };
+  }
+
+  async revertInvoice(invoiceId: number): Promise<unknown> {
+    return this.makeRequest("POST", `/kb_invoice/${invoiceId}/revert_issue`);
   }
 
   // ===== TAXES (3.0 API) =====

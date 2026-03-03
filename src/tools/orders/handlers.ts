@@ -13,6 +13,12 @@ import {
   SearchOrdersByCustomerParamsSchema,
   CreateDeliveryFromOrderParamsSchema,
   CreateInvoiceFromOrderParamsSchema,
+  EditOrderParamsSchema,
+  DeleteOrderParamsSchema,
+  GetOrderPdfParamsSchema,
+  GetOrderRepetitionParamsSchema,
+  EditOrderRepetitionParamsSchema,
+  DeleteOrderRepetitionParamsSchema,
 } from "../../types/index.js";
 
 export type HandlerFn = (
@@ -85,5 +91,35 @@ export const handlers: Record<string, HandlerFn> = {
   create_invoice_from_order: async (client, args) => {
     const { order_id } = CreateInvoiceFromOrderParamsSchema.parse(args);
     return client.createInvoiceFromOrder(order_id);
+  },
+
+  edit_order: async (client, args) => {
+    const { order_id, order_data } = EditOrderParamsSchema.parse(args);
+    return client.editOrder(order_id, order_data);
+  },
+
+  delete_order: async (client, args) => {
+    const { order_id } = DeleteOrderParamsSchema.parse(args);
+    return client.deleteOrder(order_id);
+  },
+
+  get_order_pdf: async (client, args) => {
+    const { order_id } = GetOrderPdfParamsSchema.parse(args);
+    return client.getOrderPdf(order_id);
+  },
+
+  get_order_repetition: async (client, args) => {
+    const { order_id } = GetOrderRepetitionParamsSchema.parse(args);
+    return client.getOrderRepetition(order_id);
+  },
+
+  edit_order_repetition: async (client, args) => {
+    const { order_id, repetition_id, repetition_data } = EditOrderRepetitionParamsSchema.parse(args);
+    return client.editOrderRepetition(order_id, repetition_id, repetition_data);
+  },
+
+  delete_order_repetition: async (client, args) => {
+    const { order_id, repetition_id } = DeleteOrderRepetitionParamsSchema.parse(args);
+    return client.deleteOrderRepetition(order_id, repetition_id);
   },
 };

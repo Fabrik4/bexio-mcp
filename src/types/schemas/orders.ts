@@ -131,3 +131,49 @@ export const CreateDeliveryFromOrderParamsSchema = z.object({
 export type CreateDeliveryFromOrderParams = z.infer<
   typeof CreateDeliveryFromOrderParamsSchema
 >;
+
+// Edit order
+export const EditOrderParamsSchema = z.object({
+  order_id: z.number().int().positive(),
+  order_data: z.record(z.unknown()),
+});
+
+export type EditOrderParams = z.infer<typeof EditOrderParamsSchema>;
+
+// Delete order
+export const DeleteOrderParamsSchema = z.object({
+  order_id: z.number().int().positive(),
+});
+
+export type DeleteOrderParams = z.infer<typeof DeleteOrderParamsSchema>;
+
+// Get order PDF
+export const GetOrderPdfParamsSchema = z.object({
+  order_id: z.number().int().positive(),
+});
+
+export type GetOrderPdfParams = z.infer<typeof GetOrderPdfParamsSchema>;
+
+// Get order repetition
+export const GetOrderRepetitionParamsSchema = z.object({
+  order_id: z.number().int().positive(),
+});
+
+export type GetOrderRepetitionParams = z.infer<typeof GetOrderRepetitionParamsSchema>;
+
+// Edit order repetition
+export const EditOrderRepetitionParamsSchema = z.object({
+  order_id: z.number().int().positive(),
+  repetition_id: z.number().int().positive(),
+  repetition_data: z.record(z.unknown()),
+});
+
+export type EditOrderRepetitionParams = z.infer<typeof EditOrderRepetitionParamsSchema>;
+
+// Delete order repetition
+export const DeleteOrderRepetitionParamsSchema = z.object({
+  order_id: z.number().int().positive(),
+  repetition_id: z.number().int().positive(),
+});
+
+export type DeleteOrderRepetitionParams = z.infer<typeof DeleteOrderRepetitionParamsSchema>;
