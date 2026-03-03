@@ -162,6 +162,35 @@ export const CopyInvoiceParamsSchema = z.object({
 
 export type CopyInvoiceParams = z.infer<typeof CopyInvoiceParamsSchema>;
 
+// Edit invoice
+export const EditInvoiceParamsSchema = z.object({
+  invoice_id: z.number().int().positive(),
+  invoice_data: z.record(z.unknown()),
+});
+
+export type EditInvoiceParams = z.infer<typeof EditInvoiceParamsSchema>;
+
+// Delete invoice
+export const DeleteInvoiceParamsSchema = z.object({
+  invoice_id: z.number().int().positive(),
+});
+
+export type DeleteInvoiceParams = z.infer<typeof DeleteInvoiceParamsSchema>;
+
+// Get invoice PDF
+export const GetInvoicePdfParamsSchema = z.object({
+  invoice_id: z.number().int().positive(),
+});
+
+export type GetInvoicePdfParams = z.infer<typeof GetInvoicePdfParamsSchema>;
+
+// Revert invoice to draft
+export const RevertInvoiceParamsSchema = z.object({
+  invoice_id: z.number().int().positive(),
+});
+
+export type RevertInvoiceParams = z.infer<typeof RevertInvoiceParamsSchema>;
+
 // Search params interface for client methods
 export interface InvoiceSearchParams {
   query?: string;
