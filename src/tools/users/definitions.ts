@@ -6,6 +6,44 @@
 import type { Tool } from "@modelcontextprotocol/sdk/types.js";
 
 export const toolDefinitions: Tool[] = [
+  // ===== REAL USERS (USERS-01) =====
+  {
+    name: "list_users",
+    description: "List all real Bexio users (actual account users, not fictional)",
+    annotations: { readOnlyHint: true },
+    inputSchema: {
+      type: "object",
+      properties: {
+        limit: {
+          type: "integer",
+          description: "Maximum number of users to return (default: 50)",
+          default: 50,
+        },
+        offset: {
+          type: "integer",
+          description: "Number of users to skip (default: 0)",
+          default: 0,
+        },
+      },
+    },
+  },
+  {
+    name: "get_user",
+    description: "Get a specific real Bexio user by ID",
+    annotations: { readOnlyHint: true },
+    inputSchema: {
+      type: "object",
+      properties: {
+        user_id: {
+          type: "integer",
+          description: "The ID of the user to retrieve",
+        },
+      },
+      required: ["user_id"],
+    },
+  },
+
+  // ===== CURRENT USER & FICTIONAL USERS =====
   {
     name: "get_current_user",
     description: "Get the currently authenticated user",

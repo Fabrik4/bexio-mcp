@@ -4,6 +4,7 @@
  */
 
 import { z } from "zod";
+import { SearchCriteriaSchema } from "../common.js";
 
 // ===== FILES =====
 
@@ -87,6 +88,32 @@ export const CreateAdditionalAddressParamsSchema = z.object({
 });
 
 export type CreateAdditionalAddressParams = z.infer<typeof CreateAdditionalAddressParamsSchema>;
+
+// Update additional address (REFDATA-15)
+export const UpdateAdditionalAddressParamsSchema = z.object({
+  contact_id: z.number().int().positive(),
+  address_id: z.number().int().positive(),
+  address_data: z.object({
+    name: z.string().optional(),
+    address: z.string().optional(),
+    postcode: z.string().optional(),
+    city: z.string().optional(),
+    country_id: z.number().int().positive().optional(),
+    subject: z.string().optional(),
+    description: z.string().optional(),
+  }),
+});
+
+export type UpdateAdditionalAddressParams = z.infer<typeof UpdateAdditionalAddressParamsSchema>;
+
+// Search additional addresses (REFDATA-15)
+export const SearchAdditionalAddressesParamsSchema = z.object({
+  contact_id: z.number().int().positive(),
+  search_criteria: z.array(SearchCriteriaSchema).min(1),
+  limit: z.number().int().positive().default(50),
+});
+
+export type SearchAdditionalAddressesParams = z.infer<typeof SearchAdditionalAddressesParamsSchema>;
 
 // Delete additional address
 export const DeleteAdditionalAddressParamsSchema = z.object({

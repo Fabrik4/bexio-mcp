@@ -68,3 +68,9 @@ export * from "./notes.js";
 
 // Tasks (Task management with optional resource linking)
 export * from "./tasks.js";
+
+// Stock (Stock Locations, Stock Areas)
+export * from "./stock.js";
+
+// Document Settings (Document Settings, Document Templates)
+export * from "./docs.js";

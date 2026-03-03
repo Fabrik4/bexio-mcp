@@ -11,20 +11,27 @@ import {
   GetContactGroupParamsSchema,
   CreateContactGroupParamsSchema,
   DeleteContactGroupParamsSchema,
+  UpdateContactGroupParamsSchema,
+  SearchContactGroupsParamsSchema,
   // Contact Sectors
   ListContactSectorsParamsSchema,
   GetContactSectorParamsSchema,
   CreateContactSectorParamsSchema,
+  SearchContactSectorsParamsSchema,
   // Salutations
   ListSalutationsParamsSchema,
   GetSalutationParamsSchema,
   CreateSalutationParamsSchema,
   DeleteSalutationParamsSchema,
+  UpdateSalutationParamsSchema,
+  SearchSalutationsParamsSchema,
   // Titles
   ListTitlesParamsSchema,
   GetTitleParamsSchema,
   CreateTitleParamsSchema,
   DeleteTitleParamsSchema,
+  UpdateTitleParamsSchema,
+  SearchTitlesParamsSchema,
   // Countries
   ListCountriesParamsSchema,
   GetCountryParamsSchema,
@@ -72,6 +79,16 @@ export const handlers: Record<string, HandlerFn> = {
     return client.deleteContactGroup(group_id);
   },
 
+  update_contact_group: async (client, args) => {
+    const { group_id, name } = UpdateContactGroupParamsSchema.parse(args);
+    return client.updateContactGroup(group_id, { name });
+  },
+
+  search_contact_groups: async (client, args) => {
+    const { query, limit } = SearchContactGroupsParamsSchema.parse(args);
+    return client.searchContactGroups(query, limit);
+  },
+
   // ===== CONTACT SECTORS (REFDATA-02) =====
   list_contact_sectors: async (client, args) => {
     const params = ListContactSectorsParamsSchema.parse(args);
@@ -90,6 +107,11 @@ export const handlers: Record<string, HandlerFn> = {
   create_contact_sector: async (client, args) => {
     const { name } = CreateContactSectorParamsSchema.parse(args);
     return client.createContactSector({ name });
+  },
+
+  search_contact_sectors: async (client, args) => {
+    const { query, limit } = SearchContactSectorsParamsSchema.parse(args);
+    return client.searchContactSectors(query, limit);
   },
 
   // ===== SALUTATIONS (REFDATA-03) =====
@@ -117,6 +139,16 @@ export const handlers: Record<string, HandlerFn> = {
     return client.deleteSalutation(salutation_id);
   },
 
+  update_salutation: async (client, args) => {
+    const { salutation_id, name } = UpdateSalutationParamsSchema.parse(args);
+    return client.updateSalutation(salutation_id, { name });
+  },
+
+  search_salutations: async (client, args) => {
+    const { query, limit } = SearchSalutationsParamsSchema.parse(args);
+    return client.searchSalutations(query, limit);
+  },
+
   // ===== TITLES (REFDATA-04) =====
   list_titles: async (client, args) => {
     const params = ListTitlesParamsSchema.parse(args);
@@ -140,6 +172,16 @@ export const handlers: Record<string, HandlerFn> = {
   delete_title: async (client, args) => {
     const { title_id } = DeleteTitleParamsSchema.parse(args);
     return client.deleteTitle(title_id);
+  },
+
+  update_title: async (client, args) => {
+    const { title_id, name } = UpdateTitleParamsSchema.parse(args);
+    return client.updateTitle(title_id, { name });
+  },
+
+  search_titles: async (client, args) => {
+    const { query, limit } = SearchTitlesParamsSchema.parse(args);
+    return client.searchTitles(query, limit);
   },
 
   // ===== COUNTRIES (REFDATA-05) =====

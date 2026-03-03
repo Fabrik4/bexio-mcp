@@ -116,6 +116,15 @@ export class BexioClient {
     return this.makeRequest("DELETE", `/contact_group/${groupId}`);
   }
 
+  async updateContactGroup(groupId: number, data: { name: string }): Promise<unknown> {
+    return this.makeRequest("PUT", `/contact_group/${groupId}`, undefined, data);
+  }
+
+  async searchContactGroups(query: string, limit = 100): Promise<unknown[]> {
+    const criteria: SearchCriteria[] = [{ field: "name", value: query, criteria: "like" }];
+    return this.makeRequest("POST", "/contact_group/search", { limit }, criteria);
+  }
+
   // ===== CONTACT SECTORS =====
   async listContactSectors(params: PaginationParams = {}): Promise<unknown[]> {
     return this.makeRequest("GET", "/contact_sector", params);
@@ -127,6 +136,11 @@ export class BexioClient {
 
   async createContactSector(data: { name: string }): Promise<unknown> {
     return this.makeRequest("POST", "/contact_sector", undefined, data);
+  }
+
+  async searchContactSectors(query: string, limit = 100): Promise<unknown[]> {
+    const criteria: SearchCriteria[] = [{ field: "name", value: query, criteria: "like" }];
+    return this.makeRequest("POST", "/contact_sector/search", { limit }, criteria);
   }
 
   // ===== SALUTATIONS =====
@@ -146,6 +160,15 @@ export class BexioClient {
     return this.makeRequest("DELETE", `/salutation/${salutationId}`);
   }
 
+  async updateSalutation(salutationId: number, data: { name: string }): Promise<unknown> {
+    return this.makeRequest("PUT", `/salutation/${salutationId}`, undefined, data);
+  }
+
+  async searchSalutations(query: string, limit = 100): Promise<unknown[]> {
+    const criteria: SearchCriteria[] = [{ field: "name", value: query, criteria: "like" }];
+    return this.makeRequest("POST", "/salutation/search", { limit }, criteria);
+  }
+
   // ===== TITLES =====
   async listTitles(params: PaginationParams = {}): Promise<unknown[]> {
     return this.makeRequest("GET", "/title", params);
@@ -161,6 +184,15 @@ export class BexioClient {
 
   async deleteTitle(titleId: number): Promise<unknown> {
     return this.makeRequest("DELETE", `/title/${titleId}`);
+  }
+
+  async updateTitle(titleId: number, data: { name: string }): Promise<unknown> {
+    return this.makeRequest("PUT", `/title/${titleId}`, undefined, data);
+  }
+
+  async searchTitles(query: string, limit = 100): Promise<unknown[]> {
+    const criteria: SearchCriteria[] = [{ field: "name", value: query, criteria: "like" }];
+    return this.makeRequest("POST", "/title/search", { limit }, criteria);
   }
 
   // ===== COUNTRIES =====
@@ -765,7 +797,16 @@ export class BexioClient {
     );
   }
 
-  // ===== USERS =====
+  // ===== REAL USERS (USERS-01, v3.0 API) =====
+  async listUsers(params: PaginationParams = {}): Promise<unknown[]> {
+    return this.makeVersionedRequest("3.0", "GET", "users", params);
+  }
+
+  async getUser(userId: number): Promise<unknown> {
+    return this.makeVersionedRequest("3.0", "GET", `users/${userId}`);
+  }
+
+  // ===== FICTIONAL USERS & CURRENT USER =====
   async getCurrentUser(): Promise<unknown> {
     return this.makeRequest("GET", "/user/me");
   }
@@ -1540,6 +1581,14 @@ export class BexioClient {
     return this.makeRequest("POST", `/contact/${contactId}/additional_address`, undefined, data);
   }
 
+  async updateAdditionalAddress(contactId: number, addressId: number, data: Record<string, unknown>): Promise<unknown> {
+    return this.makeRequest("PUT", `/contact/${contactId}/additional_address/${addressId}`, undefined, data);
+  }
+
+  async searchAdditionalAddresses(contactId: number, criteria: SearchCriteria[], limit = 50): Promise<unknown[]> {
+    return this.makeRequest("POST", `/contact/${contactId}/additional_address/search`, { limit }, criteria);
+  }
+
   async deleteAdditionalAddress(contactId: number, addressId: number): Promise<unknown> {
     return this.makeRequest("DELETE", `/contact/${contactId}/additional_address/${addressId}`);
   }
@@ -1614,5 +1663,33 @@ export class BexioClient {
 
   async listTaskStatuses(): Promise<unknown[]> {
     return this.makeRequest("GET", "/task_status");
+  }
+
+  // ===== STOCK LOCATIONS (STOCK-01) =====
+  async listStockLocations(params: PaginationParams = {}): Promise<unknown[]> {
+    return this.makeRequest("GET", "/stock_location", params);
+  }
+
+  async searchStockLocations(criteria: SearchCriteria[], limit = 100): Promise<unknown[]> {
+    return this.makeRequest("POST", "/stock_location/search", { limit }, criteria);
+  }
+
+  // ===== STOCK AREAS (STOCK-02) =====
+  async listStockAreas(params: PaginationParams = {}): Promise<unknown[]> {
+    return this.makeRequest("GET", "/stock_area", params);
+  }
+
+  async searchStockAreas(criteria: SearchCriteria[], limit = 100): Promise<unknown[]> {
+    return this.makeRequest("POST", "/stock_area/search", { limit }, criteria);
+  }
+
+  // ===== DOCUMENT SETTINGS (DOCS-01) =====
+  async listDocumentSettings(params: PaginationParams = {}): Promise<unknown[]> {
+    return this.makeRequest("GET", "/document_setting", params);
+  }
+
+  // ===== DOCUMENT TEMPLATES (DOCS-02) =====
+  async listDocumentTemplates(params: PaginationParams = {}): Promise<unknown[]> {
+    return this.makeRequest("GET", "/kb_document_template", params);
   }
 }

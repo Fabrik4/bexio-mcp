@@ -210,6 +210,92 @@ export const toolDefinitions: Tool[] = [
     },
   },
   {
+    name: "update_additional_address",
+    description: "Update an additional address for a contact",
+    annotations: { destructiveHint: false },
+    inputSchema: {
+      type: "object",
+      properties: {
+        contact_id: {
+          type: "integer",
+          description: "The ID of the contact",
+        },
+        address_id: {
+          type: "integer",
+          description: "The ID of the additional address to update",
+        },
+        address_data: {
+          type: "object",
+          description: "The address data to update",
+          properties: {
+            name: {
+              type: "string",
+              description: "Name/label for the address",
+            },
+            address: {
+              type: "string",
+              description: "Street address",
+            },
+            postcode: {
+              type: "string",
+              description: "Postal code",
+            },
+            city: {
+              type: "string",
+              description: "City",
+            },
+            country_id: {
+              type: "integer",
+              description: "Country ID",
+            },
+            subject: {
+              type: "string",
+              description: "Subject/purpose of the address",
+            },
+            description: {
+              type: "string",
+              description: "Additional description",
+            },
+          },
+        },
+      },
+      required: ["contact_id", "address_id", "address_data"],
+    },
+  },
+  {
+    name: "search_additional_addresses",
+    description: "Search additional addresses for a contact by criteria",
+    annotations: { readOnlyHint: true },
+    inputSchema: {
+      type: "object",
+      properties: {
+        contact_id: {
+          type: "integer",
+          description: "The ID of the contact",
+        },
+        search_criteria: {
+          type: "array",
+          description: "Array of search criteria objects with field, value, and criteria properties",
+          items: {
+            type: "object",
+            properties: {
+              field: { type: "string", description: "Field name to search" },
+              value: { type: "string", description: "Value to search for" },
+              criteria: { type: "string", description: "Search operator (e.g., 'like', '=')", default: "like" },
+            },
+            required: ["field", "value"],
+          },
+        },
+        limit: {
+          type: "integer",
+          description: "Maximum number of results to return (default: 50)",
+          default: 50,
+        },
+      },
+      required: ["contact_id", "search_criteria"],
+    },
+  },
+  {
     name: "delete_additional_address",
     description: "Delete an additional address from a contact",
     annotations: { destructiveHint: true },

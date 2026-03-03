@@ -1,9 +1,28 @@
 /**
  * User-related Zod schemas and types.
- * Domain: Users (Fictional Users)
+ * Domain: Users (Real Users & Fictional Users)
  */
 
 import { z } from "zod";
+
+// ===== REAL USERS (USERS-01) =====
+
+// List real users
+export const ListUsersParamsSchema = z.object({
+  limit: z.number().int().positive().default(50),
+  offset: z.number().int().min(0).default(0),
+});
+
+export type ListUsersParams = z.infer<typeof ListUsersParamsSchema>;
+
+// Get single real user
+export const GetUserParamsSchema = z.object({
+  user_id: z.number().int().positive(),
+});
+
+export type GetUserParams = z.infer<typeof GetUserParamsSchema>;
+
+// ===== FICTIONAL USERS =====
 
 // List fictional users
 export const ListFictionalUsersParamsSchema = z.object({

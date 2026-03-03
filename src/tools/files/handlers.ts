@@ -15,6 +15,8 @@ import {
   ListAdditionalAddressesParamsSchema,
   GetAdditionalAddressParamsSchema,
   CreateAdditionalAddressParamsSchema,
+  UpdateAdditionalAddressParamsSchema,
+  SearchAdditionalAddressesParamsSchema,
   DeleteAdditionalAddressParamsSchema,
 } from "../../types/index.js";
 
@@ -82,6 +84,16 @@ export const handlers: Record<string, HandlerFn> = {
   create_additional_address: async (client, args) => {
     const { contact_id, address_data } = CreateAdditionalAddressParamsSchema.parse(args);
     return client.createAdditionalAddress(contact_id, address_data);
+  },
+
+  update_additional_address: async (client, args) => {
+    const { contact_id, address_id, address_data } = UpdateAdditionalAddressParamsSchema.parse(args);
+    return client.updateAdditionalAddress(contact_id, address_id, address_data);
+  },
+
+  search_additional_addresses: async (client, args) => {
+    const { contact_id, search_criteria, limit } = SearchAdditionalAddressesParamsSchema.parse(args);
+    return client.searchAdditionalAddresses(contact_id, search_criteria, limit);
   },
 
   delete_additional_address: async (client, args) => {
