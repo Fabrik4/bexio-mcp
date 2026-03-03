@@ -389,7 +389,7 @@ export class BexioClient {
   }
 
   async editOrder(orderId: number, orderData: Record<string, unknown>): Promise<unknown> {
-    return this.makeRequest("POST", `/kb_order/${orderId}`, undefined, orderData);
+    return this.makeRequest("PUT", `/kb_order/${orderId}`, undefined, orderData);
   }
 
   async deleteOrder(orderId: number): Promise<unknown> {
@@ -409,7 +409,7 @@ export class BexioClient {
   }
 
   async editOrderRepetition(orderId: number, repetitionId: number, data: Record<string, unknown>): Promise<unknown> {
-    return this.makeRequest("POST", `/kb_order/${orderId}/repetition/${repetitionId}`, undefined, data);
+    return this.makeRequest("PUT", `/kb_order/${orderId}/repetition/${repetitionId}`, undefined, data);
   }
 
   async deleteOrderRepetition(orderId: number, repetitionId: number): Promise<unknown> {
@@ -696,7 +696,7 @@ export class BexioClient {
   }
 
   async editInvoice(invoiceId: number, invoiceData: Record<string, unknown>): Promise<unknown> {
-    return this.makeRequest("POST", `/kb_invoice/${invoiceId}`, undefined, invoiceData);
+    return this.makeRequest("PUT", `/kb_invoice/${invoiceId}`, undefined, invoiceData);
   }
 
   async deleteInvoice(invoiceId: number): Promise<unknown> {
