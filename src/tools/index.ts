@@ -33,6 +33,8 @@ import * as misc from "./misc/index.js";
 import * as purchase from "./purchase/index.js";
 import * as files from "./files/index.js";
 import * as payroll from "./payroll/index.js";
+import * as stock from "./stock/index.js";
+import * as docs from "./docs/index.js";
 
 // Type for handler functions
 export type HandlerFn = (
@@ -60,8 +62,10 @@ const allDefinitions: Tool[] = [
   ...deliveries.toolDefinitions, // 4 tools
   ...items.toolDefinitions,      // 5 tools
   ...reports.toolDefinitions,    // 7 tools
-  ...users.toolDefinitions,      // 6 tools
+  ...users.toolDefinitions,      // 8 tools (real users + fictional users)
   ...misc.toolDefinitions,       // 9 tools
+  ...stock.toolDefinitions,      // 4 tools (stock locations, stock areas)
+  ...docs.toolDefinitions,       // 2 tools (document settings, document templates)
 ];
 
 // Aggregate all handlers
@@ -86,6 +90,8 @@ const allHandlers: Record<string, HandlerFn> = {
   ...reports.handlers,
   ...users.handlers,
   ...misc.handlers,
+  ...stock.handlers,
+  ...docs.handlers,
 };
 
 /** Get all tool definitions for registration */

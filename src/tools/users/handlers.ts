@@ -6,6 +6,8 @@
 import { BexioClient } from "../../bexio-client.js";
 import { McpError } from "../../shared/errors.js";
 import {
+  ListUsersParamsSchema,
+  GetUserParamsSchema,
   ListFictionalUsersParamsSchema,
   GetFictionalUserParamsSchema,
   CreateFictionalUserParamsSchema,
@@ -19,6 +21,22 @@ export type HandlerFn = (
 ) => Promise<unknown>;
 
 export const handlers: Record<string, HandlerFn> = {
+  // ===== REAL USERS (USERS-01) =====
+  list_users: async (client, args) => {
+    const params = ListUsersParamsSchema.parse(args);
+    return client.listUsers(params);
+  },
+
+  get_user: async (client, args) => {
+    const { user_id } = GetUserParamsSchema.parse(args);
+    const user = await client.getUser(user_id);
+    if (!user) {
+      throw McpError.notFound("User", user_id);
+    }
+    return user;
+  },
+
+  // ===== CURRENT USER & FICTIONAL USERS =====
   get_current_user: async (client) => {
     return client.getCurrentUser();
   },

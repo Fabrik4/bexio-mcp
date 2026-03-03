@@ -733,7 +733,16 @@ export class BexioClient {
     );
   }
 
-  // ===== USERS =====
+  // ===== REAL USERS (USERS-01, v3.0 API) =====
+  async listUsers(params: PaginationParams = {}): Promise<unknown[]> {
+    return this.makeVersionedRequest("3.0", "GET", "users", params);
+  }
+
+  async getUser(userId: number): Promise<unknown> {
+    return this.makeVersionedRequest("3.0", "GET", `users/${userId}`);
+  }
+
+  // ===== FICTIONAL USERS & CURRENT USER =====
   async getCurrentUser(): Promise<unknown> {
     return this.makeRequest("GET", "/user/me");
   }
@@ -1510,5 +1519,33 @@ export class BexioClient {
 
   async deleteAdditionalAddress(contactId: number, addressId: number): Promise<unknown> {
     return this.makeRequest("DELETE", `/contact/${contactId}/additional_address/${addressId}`);
+  }
+
+  // ===== STOCK LOCATIONS (STOCK-01) =====
+  async listStockLocations(params: PaginationParams = {}): Promise<unknown[]> {
+    return this.makeRequest("GET", "/stock_location", params);
+  }
+
+  async searchStockLocations(criteria: SearchCriteria[], limit = 100): Promise<unknown[]> {
+    return this.makeRequest("POST", "/stock_location/search", { limit }, criteria);
+  }
+
+  // ===== STOCK AREAS (STOCK-02) =====
+  async listStockAreas(params: PaginationParams = {}): Promise<unknown[]> {
+    return this.makeRequest("GET", "/stock_area", params);
+  }
+
+  async searchStockAreas(criteria: SearchCriteria[], limit = 100): Promise<unknown[]> {
+    return this.makeRequest("POST", "/stock_area/search", { limit }, criteria);
+  }
+
+  // ===== DOCUMENT SETTINGS (DOCS-01) =====
+  async listDocumentSettings(params: PaginationParams = {}): Promise<unknown[]> {
+    return this.makeRequest("GET", "/document_setting", params);
+  }
+
+  // ===== DOCUMENT TEMPLATES (DOCS-02) =====
+  async listDocumentTemplates(params: PaginationParams = {}): Promise<unknown[]> {
+    return this.makeRequest("GET", "/kb_document_template", params);
   }
 }

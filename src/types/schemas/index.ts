@@ -62,3 +62,9 @@ export * from "./files.js";
 
 // Payroll (Employees, Absences, Payroll Documents - conditional module)
 export * from "./payroll.js";
+
+// Stock (Stock Locations, Stock Areas)
+export * from "./stock.js";
+
+// Document Settings (Document Settings, Document Templates)
+export * from "./docs.js";
