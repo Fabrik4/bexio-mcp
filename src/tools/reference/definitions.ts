@@ -73,6 +73,45 @@ export const toolDefinitions: Tool[] = [
       required: ["group_id"],
     },
   },
+  {
+    name: "update_contact_group",
+    description: "Update a contact group's name",
+    annotations: { destructiveHint: false },
+    inputSchema: {
+      type: "object",
+      properties: {
+        group_id: {
+          type: "integer",
+          description: "The ID of the contact group to update",
+        },
+        name: {
+          type: "string",
+          description: "The new name for the contact group",
+        },
+      },
+      required: ["group_id", "name"],
+    },
+  },
+  {
+    name: "search_contact_groups",
+    description: "Search contact groups by name",
+    annotations: { readOnlyHint: true },
+    inputSchema: {
+      type: "object",
+      properties: {
+        query: {
+          type: "string",
+          description: "Search query to match against group names",
+        },
+        limit: {
+          type: "integer",
+          description: "Maximum number of results to return (default: 100)",
+          default: 100,
+        },
+      },
+      required: ["query"],
+    },
+  },
 
   // ===== CONTACT SECTORS (REFDATA-02) =====
   {
@@ -123,6 +162,26 @@ export const toolDefinitions: Tool[] = [
         },
       },
       required: ["name"],
+    },
+  },
+  {
+    name: "search_contact_sectors",
+    description: "Search contact sectors by name",
+    annotations: { readOnlyHint: true },
+    inputSchema: {
+      type: "object",
+      properties: {
+        query: {
+          type: "string",
+          description: "Search query to match against sector names",
+        },
+        limit: {
+          type: "integer",
+          description: "Maximum number of results to return (default: 100)",
+          default: 100,
+        },
+      },
+      required: ["query"],
     },
   },
 
@@ -192,6 +251,45 @@ export const toolDefinitions: Tool[] = [
       required: ["salutation_id"],
     },
   },
+  {
+    name: "update_salutation",
+    description: "Update a salutation's name",
+    annotations: { destructiveHint: false },
+    inputSchema: {
+      type: "object",
+      properties: {
+        salutation_id: {
+          type: "integer",
+          description: "The ID of the salutation to update",
+        },
+        name: {
+          type: "string",
+          description: "The new name for the salutation",
+        },
+      },
+      required: ["salutation_id", "name"],
+    },
+  },
+  {
+    name: "search_salutations",
+    description: "Search salutations by name",
+    annotations: { readOnlyHint: true },
+    inputSchema: {
+      type: "object",
+      properties: {
+        query: {
+          type: "string",
+          description: "Search query to match against salutation names",
+        },
+        limit: {
+          type: "integer",
+          description: "Maximum number of results to return (default: 100)",
+          default: 100,
+        },
+      },
+      required: ["query"],
+    },
+  },
 
   // ===== TITLES (REFDATA-04) =====
   {
@@ -257,6 +355,45 @@ export const toolDefinitions: Tool[] = [
         },
       },
       required: ["title_id"],
+    },
+  },
+  {
+    name: "update_title",
+    description: "Update a title's name",
+    annotations: { destructiveHint: false },
+    inputSchema: {
+      type: "object",
+      properties: {
+        title_id: {
+          type: "integer",
+          description: "The ID of the title to update",
+        },
+        name: {
+          type: "string",
+          description: "The new name for the title",
+        },
+      },
+      required: ["title_id", "name"],
+    },
+  },
+  {
+    name: "search_titles",
+    description: "Search titles by name",
+    annotations: { readOnlyHint: true },
+    inputSchema: {
+      type: "object",
+      properties: {
+        query: {
+          type: "string",
+          description: "Search query to match against title names",
+        },
+        limit: {
+          type: "integer",
+          description: "Maximum number of results to return (default: 100)",
+          default: 100,
+        },
+      },
+      required: ["query"],
     },
   },
 

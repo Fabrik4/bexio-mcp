@@ -32,6 +32,22 @@ export const DeleteContactGroupParamsSchema = z.object({
 
 export type DeleteContactGroupParams = z.infer<typeof DeleteContactGroupParamsSchema>;
 
+// Update contact group (REFDATA-11)
+export const UpdateContactGroupParamsSchema = z.object({
+  group_id: z.number().int().positive(),
+  name: z.string().min(1, "Name is required"),
+});
+
+export type UpdateContactGroupParams = z.infer<typeof UpdateContactGroupParamsSchema>;
+
+// Search contact groups (REFDATA-11)
+export const SearchContactGroupsParamsSchema = z.object({
+  query: z.string().min(1, "Query is required"),
+  limit: z.number().int().positive().default(100),
+});
+
+export type SearchContactGroupsParams = z.infer<typeof SearchContactGroupsParamsSchema>;
+
 // ===== CONTACT SECTORS (REFDATA-02) =====
 
 export const ListContactSectorsParamsSchema = z.object({
@@ -52,6 +68,14 @@ export const CreateContactSectorParamsSchema = z.object({
 });
 
 export type CreateContactSectorParams = z.infer<typeof CreateContactSectorParamsSchema>;
+
+// Search contact sectors (REFDATA-12)
+export const SearchContactSectorsParamsSchema = z.object({
+  query: z.string().min(1, "Query is required"),
+  limit: z.number().int().positive().default(100),
+});
+
+export type SearchContactSectorsParams = z.infer<typeof SearchContactSectorsParamsSchema>;
 
 // ===== SALUTATIONS (REFDATA-03) =====
 
@@ -80,6 +104,22 @@ export const DeleteSalutationParamsSchema = z.object({
 
 export type DeleteSalutationParams = z.infer<typeof DeleteSalutationParamsSchema>;
 
+// Update salutation (REFDATA-13)
+export const UpdateSalutationParamsSchema = z.object({
+  salutation_id: z.number().int().positive(),
+  name: z.string().min(1, "Name is required"),
+});
+
+export type UpdateSalutationParams = z.infer<typeof UpdateSalutationParamsSchema>;
+
+// Search salutations (REFDATA-13)
+export const SearchSalutationsParamsSchema = z.object({
+  query: z.string().min(1, "Query is required"),
+  limit: z.number().int().positive().default(100),
+});
+
+export type SearchSalutationsParams = z.infer<typeof SearchSalutationsParamsSchema>;
+
 // ===== TITLES (REFDATA-04) =====
 
 export const ListTitlesParamsSchema = z.object({
@@ -106,6 +146,22 @@ export const DeleteTitleParamsSchema = z.object({
 });
 
 export type DeleteTitleParams = z.infer<typeof DeleteTitleParamsSchema>;
+
+// Update title (REFDATA-14)
+export const UpdateTitleParamsSchema = z.object({
+  title_id: z.number().int().positive(),
+  name: z.string().min(1, "Name is required"),
+});
+
+export type UpdateTitleParams = z.infer<typeof UpdateTitleParamsSchema>;
+
+// Search titles (REFDATA-14)
+export const SearchTitlesParamsSchema = z.object({
+  query: z.string().min(1, "Query is required"),
+  limit: z.number().int().positive().default(100),
+});
+
+export type SearchTitlesParams = z.infer<typeof SearchTitlesParamsSchema>;
 
 // ===== COUNTRIES (REFDATA-05) =====
 

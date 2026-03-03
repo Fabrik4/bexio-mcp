@@ -44,14 +44,14 @@ export type HandlerFn = (
 
 // Aggregate all tool definitions (218 total)
 const allDefinitions: Tool[] = [
-  ...reference.toolDefinitions,    // 26 tools (contact groups, sectors, salutations, titles, countries, languages, units)
+  ...reference.toolDefinitions,    // 33 tools (contact groups, sectors, salutations, titles, countries, languages, units + update/search)
   ...company.toolDefinitions,      // 6 tools (company profile, permissions, payment types)
   ...banking.toolDefinitions,      // 13 tools (bank accounts, currencies, IBAN payments, QR payments)
   ...projects.toolDefinitions,     // 21 tools (projects, project types, project statuses, milestones, work packages)
   ...timetracking.toolDefinitions, // 11 tools (timesheets, statuses, business activities, communication types)
   ...accounting.toolDefinitions,   // 15 tools (accounts, groups, years, entries, VAT, journal)
   ...purchase.toolDefinitions,     // 23 tools (bills, expenses, purchase orders, outgoing payments)
-  ...files.toolDefinitions,        // 10 tools (files, additional addresses)
+  ...files.toolDefinitions,        // 12 tools (files, additional addresses + update/search)
   ...payroll.toolDefinitions,      // 10 tools (employees, absences, payroll docs - conditional)
   ...contacts.toolDefinitions,     // 7 tools
   ...invoices.toolDefinitions,   // 15 tools
