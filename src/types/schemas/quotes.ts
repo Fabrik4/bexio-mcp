@@ -87,3 +87,53 @@ export const CreateInvoiceFromQuoteParamsSchema = z.object({
 export type CreateInvoiceFromQuoteParams = z.infer<
   typeof CreateInvoiceFromQuoteParamsSchema
 >;
+
+// Edit quote
+export const EditQuoteParamsSchema = z.object({
+  quote_id: z.number().int().positive(),
+  quote_data: z.record(z.unknown()),
+});
+
+export type EditQuoteParams = z.infer<typeof EditQuoteParamsSchema>;
+
+// Delete quote
+export const DeleteQuoteParamsSchema = z.object({
+  quote_id: z.number().int().positive(),
+});
+
+export type DeleteQuoteParams = z.infer<typeof DeleteQuoteParamsSchema>;
+
+// Revert quote to draft
+export const RevertQuoteParamsSchema = z.object({
+  quote_id: z.number().int().positive(),
+});
+
+export type RevertQuoteParams = z.infer<typeof RevertQuoteParamsSchema>;
+
+// Reissue quote
+export const ReissueQuoteParamsSchema = z.object({
+  quote_id: z.number().int().positive(),
+});
+
+export type ReissueQuoteParams = z.infer<typeof ReissueQuoteParamsSchema>;
+
+// Mark quote as sent
+export const MarkQuoteAsSentParamsSchema = z.object({
+  quote_id: z.number().int().positive(),
+});
+
+export type MarkQuoteAsSentParams = z.infer<typeof MarkQuoteAsSentParamsSchema>;
+
+// Get quote PDF
+export const GetQuotePdfParamsSchema = z.object({
+  quote_id: z.number().int().positive(),
+});
+
+export type GetQuotePdfParams = z.infer<typeof GetQuotePdfParamsSchema>;
+
+// Copy quote
+export const CopyQuoteParamsSchema = z.object({
+  quote_id: z.number().int().positive(),
+});
+
+export type CopyQuoteParams = z.infer<typeof CopyQuoteParamsSchema>;

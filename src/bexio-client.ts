@@ -467,6 +467,38 @@ export class BexioClient {
     return this.makeRequest("POST", `/kb_offer/${quoteId}/create_invoice`);
   }
 
+  async editQuote(quoteId: number, quoteData: Record<string, unknown>): Promise<unknown> {
+    return this.makeRequest("PUT", `/kb_offer/${quoteId}`, undefined, quoteData);
+  }
+
+  async deleteQuote(quoteId: number): Promise<unknown> {
+    return this.makeRequest("DELETE", `/kb_offer/${quoteId}`);
+  }
+
+  async revertQuote(quoteId: number): Promise<unknown> {
+    return this.makeRequest("POST", `/kb_offer/${quoteId}/revert_issue`);
+  }
+
+  async reissueQuote(quoteId: number): Promise<unknown> {
+    return this.makeRequest("POST", `/kb_offer/${quoteId}/reissue`);
+  }
+
+  async markQuoteAsSent(quoteId: number): Promise<unknown> {
+    return this.makeRequest("POST", `/kb_offer/${quoteId}/mark_as_sent`);
+  }
+
+  async getQuotePdf(quoteId: number): Promise<unknown> {
+    const response = await this.client.get(`/kb_offer/${quoteId}/pdf`, {
+      responseType: "arraybuffer",
+    });
+    const base64 = Buffer.from(response.data).toString("base64");
+    return { content: base64, content_type: "application/pdf", filename: `quote_${quoteId}.pdf` };
+  }
+
+  async copyQuote(quoteId: number): Promise<unknown> {
+    return this.makeRequest("POST", `/kb_offer/${quoteId}/copy`);
+  }
+
   // ===== INVOICES =====
   async listInvoices(params: PaginationParams = {}): Promise<unknown[]> {
     return this.makeRequest("GET", "/kb_invoice", params);
