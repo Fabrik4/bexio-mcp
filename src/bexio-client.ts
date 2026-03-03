@@ -419,6 +419,38 @@ export class BexioClient {
     return this.makeRequest("POST", `/contact/${contactId}`, undefined, contactData);
   }
 
+  async createContact(data: Record<string, unknown>): Promise<unknown> {
+    return this.makeRequest("POST", "/contact", undefined, data);
+  }
+
+  async deleteContact(contactId: number): Promise<unknown> {
+    return this.makeRequest("DELETE", `/contact/${contactId}`);
+  }
+
+  async bulkCreateContacts(
+    contacts: Record<string, unknown>[]
+  ): Promise<{ results: Array<{ success: true; contact: unknown } | { success: false; error: string }>; summary: { created: number; failed: number; total: number } }> {
+    const results: Array<{ success: true; contact: unknown } | { success: false; error: string }> = [];
+    for (const contactData of contacts) {
+      try {
+        const contact = await this.makeRequest("POST", "/contact", undefined, contactData);
+        results.push({ success: true, contact });
+      } catch (err: unknown) {
+        const message = err instanceof Error ? err.message : String(err);
+        results.push({ success: false, error: message });
+      }
+    }
+    const created = results.filter((r) => r.success).length;
+    return {
+      results,
+      summary: { created, failed: results.length - created, total: results.length },
+    };
+  }
+
+  async restoreContact(contactId: number): Promise<unknown> {
+    return this.makeRequest("POST", `/contact/${contactId}/restore`);
+  }
+
   // ===== QUOTES =====
   async createQuote(quoteData: Record<string, unknown>): Promise<unknown> {
     return this.makeRequest("POST", "/kb_offer", undefined, quoteData);

@@ -69,6 +69,52 @@ export const UpdateContactParamsSchema = z.object({
 
 export type UpdateContactParams = z.infer<typeof UpdateContactParamsSchema>;
 
+// Shared fields for creating a contact (used by both single and bulk create)
+export const ContactCreateFieldsSchema = z.object({
+  contact_type: z.enum(["person", "company"]),
+  name_1: z.string().min(1, "name_1 is required (last name for person, company name for company)"),
+  name_2: z.string().optional(),
+  mail: z.string().optional(),
+  phone_fixed: z.string().optional(),
+  phone_mobile: z.string().optional(),
+  fax: z.string().optional(),
+  url: z.string().optional(),
+  address: z.string().optional(),
+  postcode: z.string().optional(),
+  city: z.string().optional(),
+  country_id: z.number().int().positive().optional(),
+  salutation_id: z.number().int().positive().optional(),
+  title_id: z.number().int().positive().optional(),
+  birthday: z.string().optional(),
+  remarks: z.string().optional(),
+  language_id: z.number().int().positive().optional(),
+  contact_group_ids: z.array(z.number().int().positive()).optional(),
+  sector_id: z.number().int().positive().optional(),
+  user_id: z.number().int().positive().optional(),
+});
+
+// Create a single contact
+export const CreateContactParamsSchema = ContactCreateFieldsSchema;
+export type CreateContactParams = z.infer<typeof CreateContactParamsSchema>;
+
+// Delete a contact (soft delete)
+export const DeleteContactParamsSchema = z.object({
+  contact_id: z.number().int().positive(),
+});
+export type DeleteContactParams = z.infer<typeof DeleteContactParamsSchema>;
+
+// Bulk create contacts
+export const BulkCreateContactsParamsSchema = z.object({
+  contacts: z.array(ContactCreateFieldsSchema).min(1).max(50),
+});
+export type BulkCreateContactsParams = z.infer<typeof BulkCreateContactsParamsSchema>;
+
+// Restore a deleted contact
+export const RestoreContactParamsSchema = z.object({
+  contact_id: z.number().int().positive(),
+});
+export type RestoreContactParams = z.infer<typeof RestoreContactParamsSchema>;
+
 // Search params interface for client methods
 export interface ContactSearchParams extends PaginationParams {
   search_term?: string;
