@@ -737,6 +737,24 @@ export class BexioClient {
     return this.makeRequest("POST", "/article", undefined, itemData);
   }
 
+  async editItem(
+    itemId: number,
+    itemData: Record<string, unknown>
+  ): Promise<unknown> {
+    return this.makeRequest("PUT", `/article/${itemId}`, undefined, itemData);
+  }
+
+  async deleteItem(itemId: number): Promise<unknown> {
+    return this.makeRequest("DELETE", `/article/${itemId}`);
+  }
+
+  async searchItems(query: string, limit = 100): Promise<unknown[]> {
+    const criteria: SearchCriteria[] = [
+      { field: "name_1", value: query, criteria: "like" },
+    ];
+    return this.makeRequest("POST", "/article/search", { limit }, criteria);
+  }
+
   // ===== DELIVERIES =====
   async listDeliveries(params: PaginationParams = {}): Promise<unknown[]> {
     return this.makeRequest("GET", "/kb_delivery", params);
@@ -833,6 +851,33 @@ export class BexioClient {
       "POST",
       `/kb_invoice/${invoiceId}/reminder/${reminderId}/send`
     );
+  }
+
+  async markReminderAsUnsent(
+    invoiceId: number,
+    reminderId: number
+  ): Promise<unknown> {
+    return this.makeRequest(
+      "POST",
+      `/kb_invoice/${invoiceId}/reminder/${reminderId}/mark_as_unsent`
+    );
+  }
+
+  async getReminderPdf(
+    invoiceId: number,
+    reminderId: number
+  ): Promise<unknown> {
+    const response = await this.client.request({
+      method: "GET",
+      url: `/kb_invoice/${invoiceId}/reminder/${reminderId}/pdf`,
+      responseType: "arraybuffer",
+    });
+    const base64 = Buffer.from(response.data).toString("base64");
+    return {
+      content: base64,
+      content_type: "application/pdf",
+      filename: `reminder_${reminderId}.pdf`,
+    };
   }
 
   // ===== CONTACT RELATIONS =====

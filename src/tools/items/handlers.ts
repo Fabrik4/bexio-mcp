@@ -9,6 +9,9 @@ import {
   ListItemsParamsSchema,
   GetItemParamsSchema,
   CreateItemParamsSchema,
+  EditItemParamsSchema,
+  DeleteItemParamsSchema,
+  SearchItemsParamsSchema,
   ListTaxesParamsSchema,
   GetTaxParamsSchema,
 } from "../../types/index.js";
@@ -50,5 +53,20 @@ export const handlers: Record<string, HandlerFn> = {
       throw McpError.notFound("Tax", tax_id);
     }
     return tax;
+  },
+
+  edit_item: async (client, args) => {
+    const { item_id, item_data } = EditItemParamsSchema.parse(args);
+    return client.editItem(item_id, item_data);
+  },
+
+  delete_item: async (client, args) => {
+    const { item_id } = DeleteItemParamsSchema.parse(args);
+    return client.deleteItem(item_id);
+  },
+
+  search_items: async (client, args) => {
+    const { query, limit } = SearchItemsParamsSchema.parse(args);
+    return client.searchItems(query, limit);
   },
 };

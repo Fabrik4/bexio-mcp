@@ -140,4 +140,42 @@ export const toolDefinitions: Tool[] = [
       properties: {},
     },
   },
+  {
+    name: "mark_reminder_as_unsent",
+    description: "Mark a reminder as unsent (reverse of mark as sent)",
+    annotations: { destructiveHint: false },
+    inputSchema: {
+      type: "object",
+      properties: {
+        invoice_id: {
+          type: "integer",
+          description: "The ID of the invoice",
+        },
+        reminder_id: {
+          type: "integer",
+          description: "The ID of the reminder to mark as unsent",
+        },
+      },
+      required: ["invoice_id", "reminder_id"],
+    },
+  },
+  {
+    name: "get_reminder_pdf",
+    description: "Get a reminder as PDF (returns base64-encoded content)",
+    annotations: { readOnlyHint: true },
+    inputSchema: {
+      type: "object",
+      properties: {
+        invoice_id: {
+          type: "integer",
+          description: "The ID of the invoice",
+        },
+        reminder_id: {
+          type: "integer",
+          description: "The ID of the reminder to get as PDF",
+        },
+      },
+      required: ["invoice_id", "reminder_id"],
+    },
+  },
 ];

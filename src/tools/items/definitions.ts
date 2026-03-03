@@ -105,4 +105,59 @@ export const toolDefinitions: Tool[] = [
       required: ["tax_id"],
     },
   },
+  {
+    name: "edit_item",
+    description: "Edit/update an existing item",
+    annotations: { destructiveHint: false },
+    inputSchema: {
+      type: "object",
+      properties: {
+        item_id: {
+          type: "integer",
+          description: "The ID of the item to edit",
+        },
+        item_data: {
+          type: "object",
+          description:
+            "Fields to update on the item -- same fields as create_item",
+        },
+      },
+      required: ["item_id", "item_data"],
+    },
+  },
+  {
+    name: "delete_item",
+    description: "Delete an item",
+    annotations: { destructiveHint: true },
+    inputSchema: {
+      type: "object",
+      properties: {
+        item_id: {
+          type: "integer",
+          description: "The ID of the item to delete",
+        },
+      },
+      required: ["item_id"],
+    },
+  },
+  {
+    name: "search_items",
+    description: "Search items by name",
+    annotations: { readOnlyHint: true },
+    inputSchema: {
+      type: "object",
+      properties: {
+        query: {
+          type: "string",
+          description: "Search query to match against item name",
+        },
+        limit: {
+          type: "integer",
+          description: "Maximum results to return (default: 100)",
+          default: 100,
+        },
+      },
+      required: ["query"],
+    },
+  },
 ];

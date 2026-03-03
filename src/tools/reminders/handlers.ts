@@ -11,6 +11,8 @@ import {
   CreateReminderParamsSchema,
   DeleteReminderParamsSchema,
   MarkReminderAsSentParamsSchema,
+  MarkReminderAsUnsentParamsSchema,
+  GetReminderPdfParamsSchema,
   SendReminderParamsSchema,
   SearchRemindersParamsSchema,
 } from "../../types/index.js";
@@ -62,5 +64,17 @@ export const handlers: Record<string, HandlerFn> = {
 
   get_reminders_sent_this_week: async (client) => {
     return client.getRemindersSentThisWeek();
+  },
+
+  mark_reminder_as_unsent: async (client, args) => {
+    const { invoice_id, reminder_id } =
+      MarkReminderAsUnsentParamsSchema.parse(args);
+    return client.markReminderAsUnsent(invoice_id, reminder_id);
+  },
+
+  get_reminder_pdf: async (client, args) => {
+    const { invoice_id, reminder_id } =
+      GetReminderPdfParamsSchema.parse(args);
+    return client.getReminderPdf(invoice_id, reminder_id);
   },
 };

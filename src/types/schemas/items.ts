@@ -46,6 +46,29 @@ export const CreateItemParamsSchema = z.object({
 
 export type CreateItemParams = z.infer<typeof CreateItemParamsSchema>;
 
+// Edit item
+export const EditItemParamsSchema = z.object({
+  item_id: z.number().int().positive(),
+  item_data: z.record(z.unknown()),
+});
+
+export type EditItemParams = z.infer<typeof EditItemParamsSchema>;
+
+// Delete item
+export const DeleteItemParamsSchema = z.object({
+  item_id: z.number().int().positive(),
+});
+
+export type DeleteItemParams = z.infer<typeof DeleteItemParamsSchema>;
+
+// Search items
+export const SearchItemsParamsSchema = z.object({
+  query: z.string().min(1),
+  limit: z.number().int().positive().default(100),
+});
+
+export type SearchItemsParams = z.infer<typeof SearchItemsParamsSchema>;
+
 // List taxes
 export const ListTaxesParamsSchema = z.object({
   limit: z.number().int().positive().default(50),

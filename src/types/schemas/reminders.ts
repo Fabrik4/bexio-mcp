@@ -54,6 +54,24 @@ export const SendReminderParamsSchema = z.object({
 
 export type SendReminderParams = z.infer<typeof SendReminderParamsSchema>;
 
+// Mark reminder as unsent
+export const MarkReminderAsUnsentParamsSchema = z.object({
+  invoice_id: z.number().int().positive(),
+  reminder_id: z.number().int().positive(),
+});
+
+export type MarkReminderAsUnsentParams = z.infer<
+  typeof MarkReminderAsUnsentParamsSchema
+>;
+
+// Get reminder PDF
+export const GetReminderPdfParamsSchema = z.object({
+  invoice_id: z.number().int().positive(),
+  reminder_id: z.number().int().positive(),
+});
+
+export type GetReminderPdfParams = z.infer<typeof GetReminderPdfParamsSchema>;
+
 // Search reminders
 export const SearchRemindersParamsSchema = z.object({
   search_params: z.record(z.unknown()),
