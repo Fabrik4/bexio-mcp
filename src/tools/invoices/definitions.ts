@@ -165,4 +165,53 @@ export const toolDefinitions: Tool[] = [
     annotations: { readOnlyHint: true },
     inputSchema: { type: "object", properties: {} },
   },
+  {
+    name: "edit_invoice",
+    description: "Edit/update an existing invoice",
+    annotations: { destructiveHint: false },
+    inputSchema: {
+      type: "object",
+      properties: {
+        invoice_id: { type: "integer", description: "The ID of the invoice to edit" },
+        invoice_data: { type: "object", description: "Fields to update on the invoice" },
+      },
+      required: ["invoice_id", "invoice_data"],
+    },
+  },
+  {
+    name: "delete_invoice",
+    description: "Delete an invoice",
+    annotations: { destructiveHint: true },
+    inputSchema: {
+      type: "object",
+      properties: {
+        invoice_id: { type: "integer", description: "The ID of the invoice to delete" },
+      },
+      required: ["invoice_id"],
+    },
+  },
+  {
+    name: "get_invoice_pdf",
+    description: "Get an invoice as PDF (returns base64-encoded content)",
+    annotations: { readOnlyHint: true },
+    inputSchema: {
+      type: "object",
+      properties: {
+        invoice_id: { type: "integer", description: "The ID of the invoice to get as PDF" },
+      },
+      required: ["invoice_id"],
+    },
+  },
+  {
+    name: "revert_invoice_to_draft",
+    description: "Revert an issued invoice back to draft status",
+    annotations: { destructiveHint: false },
+    inputSchema: {
+      type: "object",
+      properties: {
+        invoice_id: { type: "integer", description: "The ID of the invoice to revert to draft" },
+      },
+      required: ["invoice_id"],
+    },
+  },
 ];

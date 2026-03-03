@@ -122,4 +122,110 @@ export const toolDefinitions: Tool[] = [
       required: ["order_id"],
     },
   },
+  {
+    name: "edit_order",
+    description: "Edit/update an existing order",
+    annotations: { destructiveHint: false },
+    inputSchema: {
+      type: "object",
+      properties: {
+        order_id: {
+          type: "integer",
+          description: "The ID of the order to edit",
+        },
+        order_data: {
+          type: "object",
+          description: "Fields to update on the order",
+        },
+      },
+      required: ["order_id", "order_data"],
+    },
+  },
+  {
+    name: "delete_order",
+    description: "Delete an order",
+    annotations: { destructiveHint: true },
+    inputSchema: {
+      type: "object",
+      properties: {
+        order_id: {
+          type: "integer",
+          description: "The ID of the order to delete",
+        },
+      },
+      required: ["order_id"],
+    },
+  },
+  {
+    name: "get_order_pdf",
+    description: "Get an order as PDF (returns base64-encoded content)",
+    annotations: { readOnlyHint: true },
+    inputSchema: {
+      type: "object",
+      properties: {
+        order_id: {
+          type: "integer",
+          description: "The ID of the order to get as PDF",
+        },
+      },
+      required: ["order_id"],
+    },
+  },
+  {
+    name: "get_order_repetition",
+    description: "Get repetition settings for an order",
+    annotations: { readOnlyHint: true },
+    inputSchema: {
+      type: "object",
+      properties: {
+        order_id: {
+          type: "integer",
+          description: "The ID of the order to get repetition settings for",
+        },
+      },
+      required: ["order_id"],
+    },
+  },
+  {
+    name: "edit_order_repetition",
+    description: "Edit repetition settings for an order",
+    annotations: { destructiveHint: false },
+    inputSchema: {
+      type: "object",
+      properties: {
+        order_id: {
+          type: "integer",
+          description: "The ID of the order",
+        },
+        repetition_id: {
+          type: "integer",
+          description: "The ID of the repetition to edit",
+        },
+        repetition_data: {
+          type: "object",
+          description: "Repetition fields to update",
+        },
+      },
+      required: ["order_id", "repetition_id", "repetition_data"],
+    },
+  },
+  {
+    name: "delete_order_repetition",
+    description: "Delete repetition settings for an order",
+    annotations: { destructiveHint: true },
+    inputSchema: {
+      type: "object",
+      properties: {
+        order_id: {
+          type: "integer",
+          description: "The ID of the order",
+        },
+        repetition_id: {
+          type: "integer",
+          description: "The ID of the repetition to delete",
+        },
+      },
+      required: ["order_id", "repetition_id"],
+    },
+  },
 ];

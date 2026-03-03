@@ -19,6 +19,10 @@ import {
   CopyInvoiceParamsSchema,
   ListInvoiceStatusesParamsSchema,
   ListAllStatusesParamsSchema,
+  EditInvoiceParamsSchema,
+  DeleteInvoiceParamsSchema,
+  GetInvoicePdfParamsSchema,
+  RevertInvoiceParamsSchema,
   InvoiceSearchParams,
 } from "../../types/index.js";
 
@@ -158,5 +162,25 @@ export const handlers: Record<string, HandlerFn> = {
 
   get_overdue_invoices: async (client) => {
     return client.getOverdueInvoices();
+  },
+
+  edit_invoice: async (client, args) => {
+    const { invoice_id, invoice_data } = EditInvoiceParamsSchema.parse(args);
+    return client.editInvoice(invoice_id, invoice_data);
+  },
+
+  delete_invoice: async (client, args) => {
+    const { invoice_id } = DeleteInvoiceParamsSchema.parse(args);
+    return client.deleteInvoice(invoice_id);
+  },
+
+  get_invoice_pdf: async (client, args) => {
+    const { invoice_id } = GetInvoicePdfParamsSchema.parse(args);
+    return client.getInvoicePdf(invoice_id);
+  },
+
+  revert_invoice_to_draft: async (client, args) => {
+    const { invoice_id } = RevertInvoiceParamsSchema.parse(args);
+    return client.revertInvoice(invoice_id);
   },
 };
