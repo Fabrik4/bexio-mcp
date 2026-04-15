@@ -1184,13 +1184,13 @@ export class BexioClient {
     return invoices.filter((inv) => {
       const invoice = inv as {
         kb_item_status_id?: number;
-        is_valid_until?: string;
+        is_valid_to?: string;
       };
       // Status 8 = Sent but not paid, and due date passed
       return (
         invoice.kb_item_status_id === 8 &&
-        invoice.is_valid_until &&
-        invoice.is_valid_until < today
+        invoice.is_valid_to &&
+        invoice.is_valid_to < today
       );
     });
   }
