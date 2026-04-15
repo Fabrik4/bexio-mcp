@@ -17,6 +17,20 @@ import {
   SearchCriteria,
 } from "./types/index.js";
 
+/**
+ * Bexio API expects numeric position fields (amount, unit_price, discount_in_percent)
+ * as strings (e.g. "5.000000"), but MCP schemas accept numbers for better DX.
+ * This helper converts them before sending to Bexio.
+ */
+function convertPositionNumbers(positions: Record<string, unknown>[]): Record<string, unknown>[] {
+  return positions.map((pos) => ({
+    ...pos,
+    amount: pos.amount != null ? String(pos.amount) : pos.amount,
+    unit_price: pos.unit_price != null ? String(pos.unit_price) : pos.unit_price,
+    discount_in_percent: pos.discount_in_percent != null ? String(pos.discount_in_percent) : pos.discount_in_percent,
+  }));
+}
+
 export class BexioClient {
   private client: AxiosInstance;
   private config: BexioConfig;
@@ -366,6 +380,10 @@ export class BexioClient {
   }
 
   async createOrder(orderData: OrderCreate): Promise<unknown> {
+    // Bexio API expects position amounts as strings
+    if (orderData.positions) {
+      (orderData as Record<string, unknown>).positions = convertPositionNumbers(orderData.positions as Record<string, unknown>[]);
+    }
     return this.makeRequest("POST", "/kb_order", undefined, orderData);
   }
 
@@ -513,6 +531,10 @@ export class BexioClient {
 
   // ===== QUOTES =====
   async createQuote(quoteData: Record<string, unknown>): Promise<unknown> {
+    // Bexio API expects position amounts as strings
+    if (Array.isArray(quoteData.positions)) {
+      quoteData.positions = convertPositionNumbers(quoteData.positions as Record<string, unknown>[]);
+    }
     return this.makeRequest("POST", "/kb_offer", undefined, quoteData);
   }
 
@@ -604,6 +626,10 @@ export class BexioClient {
     // Set current date if not provided
     if (!invoiceData.is_valid_from) {
       invoiceData.is_valid_from = new Date().toISOString().split("T")[0];
+    }
+    // Bexio API expects position amounts as strings
+    if (invoiceData.positions) {
+      (invoiceData as Record<string, unknown>).positions = convertPositionNumbers(invoiceData.positions as Record<string, unknown>[]);
     }
     return this.makeRequest("POST", "/kb_invoice", undefined, invoiceData);
   }
