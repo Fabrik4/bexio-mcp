@@ -97,16 +97,13 @@ export class BexioClient {
     params?: Record<string, unknown> | PaginationParams,
     data?: unknown
   ): Promise<T> {
+    // Use absolute URL to override baseURL, but go through this.client
+    // so the response interceptor (error handling) is applied
     const url = `https://api.bexio.com/${version}/${endpoint}`;
     logger.debug(`${method} ${url}`, { params, hasData: !!data });
-    const response: AxiosResponse<T> = await axios.request({
+    const response: AxiosResponse<T> = await this.client.request({
       method,
       url,
-      headers: {
-        Authorization: `Bearer ${this.config.apiToken}`,
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
       params,
       data,
     });
@@ -1575,24 +1572,25 @@ export class BexioClient {
   }
 
   // ===== EXPENSES (PURCH-02, v4.0 API) =====
+  // Note: Expenses are at /4.0/expenses (NOT /4.0/purchase/expenses like bills)
   async listExpenses(params: PaginationParams = {}): Promise<unknown[]> {
-    return this.makeVersionedRequest("4.0", "GET", "purchase/expenses", params);
+    return this.makeVersionedRequest("4.0", "GET", "expenses", params);
   }
 
   async getExpense(expenseId: string): Promise<unknown> {
-    return this.makeVersionedRequest("4.0", "GET", `purchase/expenses/${expenseId}`);
+    return this.makeVersionedRequest("4.0", "GET", `expenses/${expenseId}`);
   }
 
   async createExpense(data: Record<string, unknown>): Promise<unknown> {
-    return this.makeVersionedRequest("4.0", "POST", "purchase/expenses", undefined, data);
+    return this.makeVersionedRequest("4.0", "POST", "expenses", undefined, data);
   }
 
   async updateExpense(expenseId: string, data: Record<string, unknown>): Promise<unknown> {
-    return this.makeVersionedRequest("4.0", "PUT", `purchase/expenses/${expenseId}`, undefined, data);
+    return this.makeVersionedRequest("4.0", "PUT", `expenses/${expenseId}`, undefined, data);
   }
 
   async deleteExpense(expenseId: string): Promise<unknown> {
-    return this.makeVersionedRequest("4.0", "DELETE", `purchase/expenses/${expenseId}`);
+    return this.makeVersionedRequest("4.0", "DELETE", `expenses/${expenseId}`);
   }
 
   // ===== PURCHASE ORDERS (PURCH-03, v3.0 API) =====
