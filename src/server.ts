@@ -1,15 +1,15 @@
 /**
- * Bexio MCP Server v2
+ * Bexio MCP Server v2 — Fabrik4 Fork
  *
- * SDK 1.25.2 patterns:
- * - Import from "@modelcontextprotocol/sdk/server/mcp.js"
- * - McpServer.tool() for individual tool registration
- * - Use server.connect(transport) to start
+ * FIX: Convert JSON Schema inputSchema to ZodRawShape so that
+ * McpServer.tool() exposes parameters in the tool schema.
+ * Without this, MCP clients cannot pass parameters to tools.
  */
 
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
-import { z } from "zod";
+import { z, type ZodTypeAny } from "zod";
+import type { Tool } from "@modelcontextprotocol/sdk/types.js";
 import { logger } from "./logger.js";
 import { BexioClient } from "./bexio-client.js";
 import { getAllToolDefinitions, getHandler } from "./tools/index.js";
@@ -17,7 +17,64 @@ import { formatSuccessResponse, formatErrorResponse, McpError } from "./shared/i
 import { registerUIResources } from "./ui-resources.js";
 
 const SERVER_NAME = "bexio-mcp-server";
-const SERVER_VERSION = "2.0.0";
+const SERVER_VERSION = "2.1.0-fabrik4";
+
+/**
+ * Convert a JSON Schema property definition to a Zod type.
+ * Handles the types used in Bexio tool definitions.
+ */
+function jsonSchemaPropertyToZod(prop: Record<string, unknown>): ZodTypeAny {
+  const type = prop.type as string | undefined;
+  const enumValues = prop.enum as string[] | undefined;
+
+  if (enumValues && enumValues.length > 0) {
+    return z.enum(enumValues as [string, ...string[]]);
+  }
+
+  switch (type) {
+    case "integer":
+    case "number":
+      return z.number();
+    case "string":
+      return z.string();
+    case "boolean":
+      return z.boolean();
+    case "array":
+      return z.array(z.unknown());
+    case "object":
+      return z.record(z.unknown());
+    default:
+      return z.unknown();
+  }
+}
+
+/**
+ * Convert a Tool's inputSchema to a ZodRawShape that McpServer.tool() accepts.
+ * Makes required fields non-optional, everything else optional.
+ */
+function inputSchemaToZodShape(def: Tool): Record<string, ZodTypeAny> {
+  const schema = def.inputSchema;
+  if (!schema || typeof schema !== "object") return {};
+
+  const properties = (schema as Record<string, unknown>).properties as
+    | Record<string, Record<string, unknown>>
+    | undefined;
+  if (!properties || Object.keys(properties).length === 0) return {};
+
+  const required = new Set(
+    ((schema as Record<string, unknown>).required as string[]) || []
+  );
+
+  const shape: Record<string, ZodTypeAny> = {};
+  for (const [key, prop] of Object.entries(properties)) {
+    const zodType = jsonSchemaPropertyToZod(prop);
+    const desc = (prop.description as string) || undefined;
+    const described = desc ? zodType.describe(desc) : zodType;
+    shape[key] = required.has(key) ? described : described.optional();
+  }
+
+  return shape;
+}
 
 export class BexioMcpServer {
   private server: McpServer;
@@ -62,13 +119,18 @@ export class BexioMcpServer {
         continue;
       }
 
-      // SDK 1.25.2 expects a ZodRawShape (plain object with Zod schemas)
-      // Use empty shape and let our handlers do the validation
-      this.server.tool(
+      // Convert JSON Schema inputSchema → ZodRawShape so MCP clients
+      // see the actual parameters in the tool schema.
+      // Type assertion needed because dynamic shapes cause TS2589
+      // (excessive type instantiation depth) with McpServer generics.
+      const zodShape = inputSchemaToZodShape(def);
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (this.server.tool as any)(
         def.name,
         def.description || "",
-        {},
-        async (args) => {
+        zodShape,
+        async (args: Record<string, unknown>) => {
           if (!this.client) {
             return formatErrorResponse(
               McpError.internal("Bexio client not initialized")

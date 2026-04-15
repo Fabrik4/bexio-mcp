@@ -1,12 +1,21 @@
-# @promptpartner/bexio-mcp-server
+# Bexio MCP Server — Fabrik4 Fork
 
-Complete Swiss accounting integration for [Bexio](https://www.bexio.com/) via the [Model Context Protocol (MCP)](https://modelcontextprotocol.io/). Works with **Claude Desktop**, **n8n**, and any MCP-compatible client.
+> **Fork of [@promptpartner/bexio-mcp-server](https://github.com/PromptPartner/bexio-mcp-server)** with a critical schema fix that makes all 310 tools actually work with MCP clients.
 
-Manage invoices, contacts, projects, time tracking, and 300+ more tools through AI conversation or workflow automation.
+Complete Swiss accounting integration for [Bexio](https://www.bexio.com/) via the [Model Context Protocol (MCP)](https://modelcontextprotocol.io/). Works with **Claude Desktop**, **Claude Code**, **n8n**, and any MCP-compatible client.
 
-> ⚠️ **Early Release Software**
->
-> This project is under active development. While it's functional and tested, you may encounter bugs or unexpected behavior. Features will continue to be added and improved over time. Please [report any issues](https://github.com/promptpartner/bexio-mcp-server/issues) you find!
+## What this fork fixes
+
+The original server registers all tools with empty parameter schemas (`properties: {}`), which means MCP clients cannot pass parameters to tools. **~95% of tools (every tool requiring parameters) silently fail.**
+
+This fork converts the existing JSON Schema `inputSchema` definitions to proper Zod shapes that `McpServer.tool()` exposes to clients. The fix is in a single file (`src/server.ts`) and applies to all 310 tools automatically.
+
+**Before (original):** Only parameterless tools work (list, dashboard)
+**After (this fork):** All tools work — create invoices, search contacts, send quotes, etc.
+
+## Credits
+
+Built on the excellent work of [Lukas Hertig](https://github.com/lukashertig) and [Sebastian Bryner](https://github.com/PromptPartner) at PromptPartner. Original project: [PromptPartner/bexio-mcp-server](https://github.com/PromptPartner/bexio-mcp-server). Licensed under MIT.
 
 ## Compatibility
 
