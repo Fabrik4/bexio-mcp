@@ -67,7 +67,7 @@ export const handlers: Record<string, HandlerFn> = {
 
   create_contact: async (client, args) => {
     const { contact_type, ...fields } = CreateContactParamsSchema.parse(args);
-    const contact_type_id = contact_type === "person" ? 1 : 2;
+    const contact_type_id = contact_type === "person" ? 2 : 1;
     return client.createContact({ contact_type_id, ...fields });
   },
 
@@ -80,7 +80,7 @@ export const handlers: Record<string, HandlerFn> = {
   bulk_create_contacts: async (client, args) => {
     const { contacts } = BulkCreateContactsParamsSchema.parse(args);
     const mappedContacts = contacts.map(({ contact_type, ...fields }) => ({
-      contact_type_id: contact_type === "person" ? 1 : 2,
+      contact_type_id: contact_type === "person" ? 2 : 1,
       ...fields,
     }));
     return client.bulkCreateContacts(mappedContacts);

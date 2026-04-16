@@ -281,12 +281,13 @@ export class BexioClient {
   }
 
   // ===== BANK ACCOUNTS (Read-Only) =====
+  // Correct endpoint: /3.0/banking/accounts (not /bank_account)
   async listBankAccounts(params: PaginationParams = {}): Promise<unknown[]> {
-    return this.makeRequest("GET", "/bank_account", params);
+    return this.makeVersionedRequest("3.0", "GET", "banking/accounts", params);
   }
 
   async getBankAccount(accountId: number): Promise<unknown> {
-    return this.makeRequest("GET", `/bank_account/${accountId}`);
+    return this.makeVersionedRequest("3.0", "GET", `banking/accounts/${accountId}`);
   }
 
   // ===== CURRENCIES =====
@@ -328,15 +329,17 @@ export class BexioClient {
     is_salary_payment?: boolean;
     allowance_type?: string;
   }): Promise<unknown> {
-    return this.makeRequest("POST", "/iban_payment", undefined, data);
+    // Correct endpoint: /3.0/banking/bank_accounts/{bank_account_id}/iban_payments
+    const { bank_account_id, ...rest } = data;
+    return this.makeVersionedRequest("3.0", "POST", `banking/bank_accounts/${bank_account_id}/iban_payments`, undefined, rest);
   }
 
-  async getIbanPayment(paymentId: number): Promise<unknown> {
-    return this.makeRequest("GET", `/iban_payment/${paymentId}`);
+  async getIbanPayment(bankAccountId: number, paymentId: number | string): Promise<unknown> {
+    return this.makeVersionedRequest("3.0", "GET", `banking/bank_accounts/${bankAccountId}/iban_payments/${paymentId}`);
   }
 
-  async updateIbanPayment(paymentId: number, data: Record<string, unknown>): Promise<unknown> {
-    return this.makeRequest("PATCH", `/iban_payment/${paymentId}`, undefined, data);
+  async updateIbanPayment(bankAccountId: number, paymentId: number | string, data: Record<string, unknown>): Promise<unknown> {
+    return this.makeVersionedRequest("3.0", "PATCH", `banking/bank_accounts/${bankAccountId}/iban_payments/${paymentId}`, undefined, data);
   }
 
   // ===== QR PAYMENTS (Swiss QR-invoice standard) =====
@@ -356,7 +359,9 @@ export class BexioClient {
     qr_reference_nr?: string;
     additional_information?: string;
   }): Promise<unknown> {
-    return this.makeRequest("POST", "/qr_payment", undefined, data);
+    // Correct endpoint: /3.0/banking/bank_accounts/{bank_account_id}/qr_payments
+    const { bank_account_id, ...rest } = data;
+    return this.makeVersionedRequest("3.0", "POST", `banking/bank_accounts/${bank_account_id}/qr_payments`, undefined, rest);
   }
 
   async getQrPayment(paymentId: number): Promise<unknown> {

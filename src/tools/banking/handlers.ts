@@ -104,8 +104,9 @@ export const handlers: Record<string, HandlerFn> = {
   },
 
   get_iban_payment: async (client, args) => {
-    const { payment_id } = GetIbanPaymentParamsSchema.parse(args);
-    const payment = await client.getIbanPayment(payment_id);
+    const { payment_id, bank_account_id } = GetIbanPaymentParamsSchema.parse(args);
+    const bankAccId = bank_account_id ?? 1; // Default UBS
+    const payment = await client.getIbanPayment(bankAccId, payment_id);
     if (!payment) {
       throw McpError.notFound("IBAN payment", payment_id);
     }
@@ -113,8 +114,9 @@ export const handlers: Record<string, HandlerFn> = {
   },
 
   update_iban_payment: async (client, args) => {
-    const { payment_id, payment_data } = UpdateIbanPaymentParamsSchema.parse(args);
-    return client.updateIbanPayment(payment_id, payment_data);
+    const { payment_id, bank_account_id, payment_data } = UpdateIbanPaymentParamsSchema.parse(args);
+    const bankAccId = bank_account_id ?? 1;
+    return client.updateIbanPayment(bankAccId, payment_id, payment_data);
   },
 
   // ===== QR PAYMENTS (Swiss QR-invoice standard) =====

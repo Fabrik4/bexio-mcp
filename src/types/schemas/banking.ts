@@ -85,12 +85,14 @@ export type CreateIbanPaymentParams = z.infer<typeof CreateIbanPaymentParamsSche
 
 export const GetIbanPaymentParamsSchema = z.object({
   payment_id: z.number().int().positive(),
+  bank_account_id: z.number().int().positive().optional(),
 });
 
 export type GetIbanPaymentParams = z.infer<typeof GetIbanPaymentParamsSchema>;
 
 export const UpdateIbanPaymentParamsSchema = z.object({
   payment_id: z.number().int().positive(),
+  bank_account_id: z.number().int().positive().optional(),
   payment_data: z.record(z.unknown()),
 });
 
