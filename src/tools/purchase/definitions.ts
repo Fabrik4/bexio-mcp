@@ -227,6 +227,21 @@ export const toolDefinitions: Tool[] = [
     },
   },
 
+  {
+    name: "mark_expense_as_done",
+    description: "Mark an expense as done (changes status from DRAFT to DONE)",
+    inputSchema: {
+      type: "object",
+      properties: {
+        expense_id: {
+          type: "string",
+          description: "The UUID of the expense to mark as done",
+        },
+      },
+      required: ["expense_id"],
+    },
+  },
+
   // ===== PURCHASE ORDERS (v3.0 API, integer IDs) =====
   {
     name: "list_purchase_orders",

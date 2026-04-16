@@ -1593,6 +1593,13 @@ export class BexioClient {
     return this.makeVersionedRequest("4.0", "DELETE", `expenses/${expenseId}`);
   }
 
+  // NOTE: Bexio API returns 500 for all expense status endpoints (done/complete/mark_as_done).
+  // This is a Bexio server bug — endpoints exist but are not implemented.
+  // Keeping the method for when Bexio fixes it.
+  async markExpenseAsDone(expenseId: string): Promise<unknown> {
+    return this.makeVersionedRequest("4.0", "POST", `expenses/${expenseId}/done`);
+  }
+
   // ===== PURCHASE ORDERS (PURCH-03, v3.0 API) =====
   async listPurchaseOrders(params: PaginationParams = {}): Promise<unknown[]> {
     return this.makeVersionedRequest("3.0", "GET", "purchase_order", params);

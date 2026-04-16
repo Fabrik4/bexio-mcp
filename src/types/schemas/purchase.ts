@@ -106,6 +106,13 @@ export const DeleteExpenseParamsSchema = z.object({
 
 export type DeleteExpenseParams = z.infer<typeof DeleteExpenseParamsSchema>;
 
+// Mark expense as done
+export const MarkExpenseAsDoneParamsSchema = z.object({
+  expense_id: z.string(),
+});
+
+export type MarkExpenseAsDoneParams = z.infer<typeof MarkExpenseAsDoneParamsSchema>;
+
 // ===== PURCHASE ORDERS (v3.0 API, integer IDs) =====
 
 // List purchase orders

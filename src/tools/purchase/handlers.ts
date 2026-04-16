@@ -19,6 +19,7 @@ import {
   CreateExpenseParamsSchema,
   UpdateExpenseParamsSchema,
   DeleteExpenseParamsSchema,
+  MarkExpenseAsDoneParamsSchema,
   ListPurchaseOrdersParamsSchema,
   GetPurchaseOrderParamsSchema,
   CreatePurchaseOrderParamsSchema,
@@ -110,6 +111,11 @@ export const handlers: Record<string, HandlerFn> = {
   delete_expense: async (client, args) => {
     const { expense_id } = DeleteExpenseParamsSchema.parse(args);
     return client.deleteExpense(expense_id);
+  },
+
+  mark_expense_as_done: async (client, args) => {
+    const { expense_id } = MarkExpenseAsDoneParamsSchema.parse(args);
+    return client.markExpenseAsDone(expense_id);
   },
 
   // ===== PURCHASE ORDERS (v3.0, integer IDs) =====
