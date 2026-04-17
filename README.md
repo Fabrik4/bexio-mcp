@@ -115,6 +115,33 @@ Claude searches projects, fetches timesheets, and breaks down hours by team memb
 |----------|----------|---------|-------------|
 | `BEXIO_API_TOKEN` | Yes | — | Your Bexio API token |
 | `BEXIO_BASE_URL` | No | `https://api.bexio.com/2.0` | API endpoint URL |
+| `BEXIO_ENABLED_CATEGORIES` | No | (all) | Comma-separated category whitelist — see below |
+
+### Reducing Token Budget — Category Whitelist
+
+All 310 tools are registered by default. For focused workflows or smaller
+models (e.g. Sonnet, Haiku), registering only a subset reduces the system-
+prompt token cost significantly.
+
+Set `BEXIO_ENABLED_CATEGORIES` to a comma-separated list of categories:
+
+```bash
+BEXIO_ENABLED_CATEGORIES=contacts,invoices,purchase,banking,quotes,projects
+```
+
+Available categories: `reference`, `company`, `banking`, `projects`,
+`timetracking`, `accounting`, `purchase`, `files`, `payroll`, `contacts`,
+`invoices`, `orders`, `quotes`, `payments`, `reminders`, `deliveries`,
+`items`, `reports`, `users`, `misc`, `notes`, `tasks`, `stock`, `docs`,
+`positions`.
+
+Unknown names are logged to stderr and ignored. Empty/unset = all enabled
+(backward compatible).
+
+Typical bundles:
+- **Finance-only:** `contacts,invoices,purchase,banking,payments,reports`
+- **Operational (no accounting):** `contacts,projects,timetracking,quotes,orders,tasks`
+- **Read-only dashboards:** `reference,company,reports,contacts,invoices`
 
 ## Command Line Options
 
