@@ -91,6 +91,24 @@ export const handlers: Record<string, HandlerFn> = {
 
   issue_quote: async (client, args) => {
     const { quote_id } = IssueQuoteParamsSchema.parse(args);
+    // Pre-check: only draft quotes (kb_item_status_id=7) can be issued.
+    const current = (await client.getQuote(quote_id)) as Record<string, unknown> | null;
+    if (!current) {
+      throw McpError.notFound("Quote", quote_id);
+    }
+    const statusId = current.kb_item_status_id as number | undefined;
+    if (statusId != null && statusId !== 7) {
+      const statusLabel =
+        statusId === 8 ? "issued"
+        : statusId === 9 ? "accepted"
+        : statusId === 10 ? "declined"
+        : statusId === 15 ? "archived"
+        : statusId === 21 ? "pending"
+        : `status_id=${statusId}`;
+      throw McpError.validation(
+        `Cannot issue quote ${quote_id} — current status is '${statusLabel}', not 'draft'. Only draft quotes can be issued.`
+      );
+    }
     return client.issueQuote(quote_id);
   },
 

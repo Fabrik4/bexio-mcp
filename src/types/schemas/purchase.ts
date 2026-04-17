@@ -22,14 +22,37 @@ export const GetBillParamsSchema = z.object({
 
 export type GetBillParams = z.infer<typeof GetBillParamsSchema>;
 
+// Bill payload shape (v4.0 API).
+// passthrough() erlaubt weitere Bexio-Felder ohne Schema-Update — validiert nur die Pflichtfelder.
+export const BillDataSchema = z
+  .object({
+    title: z.string().min(1, "Bill title is required"),
+    contact_partner_id: z.number().int().positive("contact_partner_id is required (bexio employee who booked the bill)"),
+    bill_date: z
+      .string()
+      .regex(/^\d{4}-\d{2}-\d{2}$/, "bill_date must be YYYY-MM-DD"),
+    due_date: z
+      .string()
+      .regex(/^\d{4}-\d{2}-\d{2}$/, "due_date must be YYYY-MM-DD"),
+    amount_calc: z.number().positive("amount_calc must be positive"),
+    currency: z.string().min(1).default("CHF"),
+    supplier_id: z.number().int().positive().nullable().optional(),
+    vendor_ref: z.string().nullable().optional(),
+    booking_account_id: z.number().int().positive().optional(),
+    tax_id: z.number().int().positive().optional(),
+  })
+  .passthrough();
+
+export type BillData = z.infer<typeof BillDataSchema>;
+
 // Create bill
 export const CreateBillParamsSchema = z.object({
-  bill_data: z.record(z.unknown()),
+  bill_data: BillDataSchema,
 });
 
 export type CreateBillParams = z.infer<typeof CreateBillParamsSchema>;
 
-// Update bill
+// Update bill (partial — alle Felder optional, mindestens eines muss gesetzt sein via passthrough)
 export const UpdateBillParamsSchema = z.object({
   bill_id: z.string(),
   bill_data: z.record(z.unknown()),

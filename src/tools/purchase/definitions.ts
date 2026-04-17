@@ -42,14 +42,32 @@ export const toolDefinitions: Tool[] = [
   },
   {
     name: "create_bill",
-    description: "Create a new bill (creditor invoice) from a supplier",
+    description:
+      "Create a new bill (creditor invoice / v4.0). Bill is created as draft — call issue_bill afterwards. Required: title, contact_partner_id (internal user), bill_date, due_date, amount_calc, currency. Use find_contact_by_name to get supplier_id, list_accounts for booking_account_id, list_taxes for tax_id (VM81 for standard Swiss VAT).",
     annotations: { destructiveHint: false },
     inputSchema: {
       type: "object",
       properties: {
         bill_data: {
           type: "object",
-          description: "Bill data including contact_id, title, positions, etc.",
+          description: "Bill payload. Minimum: title, contact_partner_id, bill_date, due_date, amount_calc, currency.",
+          properties: {
+            title: { type: "string", description: "Bill title (e.g. 'Migros Services AG - RG045-RG01047096')" },
+            contact_partner_id: { type: "integer", description: "Internal Bexio user who books the bill (usually 1 = owner)" },
+            supplier_id: { type: ["integer", "null"], description: "Supplier contact ID (use find_contact_by_name). Null for one-off suppliers." },
+            vendor_ref: { type: ["string", "null"], description: "Supplier's invoice reference number" },
+            bill_date: { type: "string", description: "Invoice date from supplier YYYY-MM-DD" },
+            due_date: { type: "string", description: "Payment due date YYYY-MM-DD" },
+            amount_calc: { type: "number", description: "Gross amount (positive)" },
+            currency: { type: "string", description: "Currency code (CHF, EUR, USD). Default CHF." },
+            exchange_rate: { type: "number", description: "Exchange rate to CHF (1 for CHF bills)" },
+            base_currency_amount: { type: "number", description: "Amount converted to CHF" },
+            item_net: { type: "boolean", description: "true = positions are net, false = gross (default true for Swiss bills)" },
+            split_into_line_items: { type: "boolean", description: "If true, positions array is used; if false, amount_calc is booked as single line" },
+            booking_account_id: { type: "integer", description: "Expense account ID (use list_accounts; 160 = 4200 Einkauf Handelsware)" },
+            tax_id: { type: "integer", description: "Tax ID for the entire bill (use list_taxes; 48 = VM81 Vorsteuer 8.1%)" },
+          },
+          required: ["title", "contact_partner_id", "bill_date", "due_date", "amount_calc", "currency"],
         },
       },
       required: ["bill_data"],

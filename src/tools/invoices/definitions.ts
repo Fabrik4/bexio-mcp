@@ -75,11 +75,50 @@ export const toolDefinitions: Tool[] = [
   },
   {
     name: "create_invoice",
-    description: "Create a new invoice in Bexio",
+    description:
+      "Create a new invoice (kb_invoice) in Bexio. Invoice is created as draft — call issue_invoice afterwards to finalize. Required: title, contact_id, positions (at least 1). Use list_contacts to find contact_id, list_taxes for tax_id, list_accounts for account_id.",
     annotations: { destructiveHint: false },
     inputSchema: {
       type: "object",
-      properties: { invoice_data: { type: "object", description: "Invoice data to create" } },
+      properties: {
+        invoice_data: {
+          type: "object",
+          description: "Invoice payload. Minimum fields: title, contact_id, positions[].",
+          properties: {
+            title: { type: "string", description: "Invoice title (e.g. 'Beschriftung Fahrzeug Muster AG')" },
+            contact_id: { type: "integer", description: "Bexio contact ID (customer)" },
+            user_id: { type: "integer", description: "Owner user ID (defaults to current user)" },
+            currency_id: { type: "integer", description: "Currency ID (1 = CHF)" },
+            language_id: { type: "integer", description: "Language ID (1 = German)" },
+            bank_account_id: { type: "integer", description: "Bank account for payment (use list_bank_accounts)" },
+            payment_type_id: { type: "integer", description: "Payment type ID (use list_payment_types)" },
+            mwst_type: { type: "integer", description: "VAT mode: 0 = exkl., 1 = inkl., 2 = without VAT" },
+            mwst_is_net: { type: "boolean", description: "true = amounts are net, false = gross" },
+            is_valid_from: { type: "string", description: "Issue date YYYY-MM-DD" },
+            is_valid_until: { type: "string", description: "Due date YYYY-MM-DD" },
+            positions: {
+              type: "array",
+              description: "Line items. At least one required.",
+              minItems: 1,
+              items: {
+                type: "object",
+                properties: {
+                  type: { type: "string", description: "Position type (KbPositionCustom, KbPositionItem, KbPositionText, KbPositionSubtotal, KbPositionDiscount, KbPositionPagebreak)" },
+                  text: { type: "string", description: "Line description" },
+                  amount: { type: "number", description: "Quantity (must be positive)" },
+                  unit_price: { type: "number", description: "Price per unit (must be positive)" },
+                  account_id: { type: "integer", description: "Revenue account ID (use list_accounts)" },
+                  tax_id: { type: "integer", description: "Tax ID (use list_taxes)" },
+                  discount_in_percent: { type: "number", description: "Discount 0-100" },
+                  unit_id: { type: "integer", description: "Unit ID (use list_units)" },
+                },
+                required: ["type", "text", "amount", "unit_price"],
+              },
+            },
+          },
+          required: ["title", "contact_id", "positions"],
+        },
+      },
       required: ["invoice_data"],
     },
   },

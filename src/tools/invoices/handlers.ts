@@ -123,6 +123,25 @@ export const handlers: Record<string, HandlerFn> = {
 
   issue_invoice: async (client, args) => {
     const { invoice_id } = IssueInvoiceParamsSchema.parse(args);
+    // Pre-check: only draft invoices (kb_item_status_id=7) can be issued.
+    // Without this, bexio returns 500 without explaining why.
+    const current = (await client.getInvoice(invoice_id)) as Record<string, unknown> | null;
+    if (!current) {
+      throw McpError.notFound("Invoice", invoice_id);
+    }
+    const statusId = current.kb_item_status_id as number | undefined;
+    if (statusId != null && statusId !== 7) {
+      const statusLabel =
+        statusId === 8 ? "issued"
+        : statusId === 9 ? "paid"
+        : statusId === 10 ? "cancelled"
+        : statusId === 16 ? "partially paid"
+        : statusId === 19 ? "cancelled"
+        : `status_id=${statusId}`;
+      throw McpError.validation(
+        `Cannot issue invoice ${invoice_id} — current status is '${statusLabel}', not 'draft'. Only draft invoices can be issued.`
+      );
+    }
     return client.issueInvoice(invoice_id);
   },
 

@@ -75,6 +75,17 @@ export const handlers: Record<string, HandlerFn> = {
 
   issue_bill: async (client, args) => {
     const { bill_id } = IssueBillParamsSchema.parse(args);
+    // Pre-check: only draft bills can be issued. v4.0 returns status as string ("DRAFT" | "ISSUED" | "PAID" | "CANCELLED").
+    const current = (await client.getBill(bill_id)) as Record<string, unknown> | null;
+    if (!current) {
+      throw McpError.notFound("Bill", bill_id);
+    }
+    const status = (current.status as string | undefined)?.toUpperCase();
+    if (status && status !== "DRAFT") {
+      throw McpError.validation(
+        `Cannot issue bill ${bill_id} — current status is '${status}', not 'DRAFT'. Only draft bills can be issued.`
+      );
+    }
     return client.issueBill(bill_id);
   },
 

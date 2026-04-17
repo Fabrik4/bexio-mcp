@@ -227,26 +227,34 @@ export const toolDefinitions: Tool[] = [
   },
   {
     name: "get_iban_payment",
-    description: "Get details of an IBAN payment by ID",
+    description: "Get details of an IBAN payment by ID. Requires bank_account_id because Bexio scopes payments per bank account.",
     annotations: { readOnlyHint: true },
     inputSchema: {
       type: "object",
       properties: {
+        bank_account_id: {
+          type: "integer",
+          description: "ID of the bank account this payment belongs to (use list_bank_accounts to find)",
+        },
         payment_id: {
           type: "integer",
           description: "The ID of the IBAN payment to retrieve",
         },
       },
-      required: ["payment_id"],
+      required: ["bank_account_id", "payment_id"],
     },
   },
   {
     name: "update_iban_payment",
-    description: "Update a pending IBAN payment. Only pending payments can be modified.",
+    description: "Update a pending IBAN payment. Only pending payments can be modified. Requires bank_account_id because Bexio scopes payments per bank account.",
     annotations: { destructiveHint: false },
     inputSchema: {
       type: "object",
       properties: {
+        bank_account_id: {
+          type: "integer",
+          description: "ID of the bank account this payment belongs to (use list_bank_accounts to find)",
+        },
         payment_id: {
           type: "integer",
           description: "The ID of the IBAN payment to update",
@@ -256,7 +264,7 @@ export const toolDefinitions: Tool[] = [
           description: "Payment fields to update",
         },
       },
-      required: ["payment_id", "payment_data"],
+      required: ["bank_account_id", "payment_id", "payment_data"],
     },
   },
 
