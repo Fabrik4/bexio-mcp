@@ -107,17 +107,35 @@ export const GetExpenseParamsSchema = z.object({
 
 export type GetExpenseParams = z.infer<typeof GetExpenseParamsSchema>;
 
+// Expense data shape — shared by create/update. passthrough() lets unknown
+// fields (e.g. future Bexio additions) flow through without validation errors.
+const ExpenseDataFields = {
+  amount: z.number().describe("Gross amount incl. tax"),
+  currency_id: z.number().int().positive().default(1).describe("Currency ID (1 = CHF)"),
+  expense_date: z.string().describe("Expense date YYYY-MM-DD"),
+  description: z.string().describe("Short human-readable description"),
+  account_id: z.number().int().positive().describe("Chart-of-accounts ID for the expense side (use list_accounts)"),
+  tax_id: z.number().int().positive().describe("Tax ID (use list_taxes — typically VB81 = 51 for Swiss operating expenses)"),
+  bank_account_id: z.number().int().positive().describe("Bank/payment-source account ID (1 = UBS, 3 = Privat/Visa)"),
+  contact_id: z.number().int().positive().optional().describe("Supplier contact ID (optional)"),
+  project_id: z.number().int().positive().optional().describe("Linked project ID (optional)"),
+  receipt_nr: z.string().optional().describe("Receipt or reference number (optional)"),
+};
+
+export const ExpenseDataSchema = z.object(ExpenseDataFields).passthrough();
+export const ExpenseDataPartialSchema = z.object(ExpenseDataFields).partial().passthrough();
+
 // Create expense
 export const CreateExpenseParamsSchema = z.object({
-  expense_data: z.record(z.unknown()),
+  expense_data: ExpenseDataSchema,
 });
 
 export type CreateExpenseParams = z.infer<typeof CreateExpenseParamsSchema>;
 
-// Update expense
+// Update expense — all fields optional
 export const UpdateExpenseParamsSchema = z.object({
   expense_id: z.string(),
-  expense_data: z.record(z.unknown()),
+  expense_data: ExpenseDataPartialSchema,
 });
 
 export type UpdateExpenseParams = z.infer<typeof UpdateExpenseParamsSchema>;

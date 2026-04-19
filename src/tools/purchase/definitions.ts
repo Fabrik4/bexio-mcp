@@ -197,14 +197,27 @@ export const toolDefinitions: Tool[] = [
   },
   {
     name: "create_expense",
-    description: "Create a new expense record",
+    description: "Create a new expense (already-paid business cost — e.g. restaurant, fuel, SaaS charged to private card). Use create_bill for supplier invoices with an open payment term.",
     annotations: { destructiveHint: false },
     inputSchema: {
       type: "object",
       properties: {
         expense_data: {
           type: "object",
-          description: "Expense data including title, amount, date, etc.",
+          description: "Expense data",
+          properties: {
+            amount: { type: "number", description: "Gross amount incl. tax" },
+            currency_id: { type: "integer", description: "Currency ID (1 = CHF)" },
+            expense_date: { type: "string", description: "Expense date YYYY-MM-DD" },
+            description: { type: "string", description: "Short human-readable description" },
+            account_id: { type: "integer", description: "Chart-of-accounts ID for the expense side (list_accounts)" },
+            tax_id: { type: "integer", description: "Tax ID (list_taxes — typically VB81 = 51 for Swiss 8.1% operating expenses)" },
+            bank_account_id: { type: "integer", description: "Payment-source bank account ID (1 = UBS, 3 = Privat/Visa)" },
+            contact_id: { type: "integer", description: "Supplier contact ID (optional)" },
+            project_id: { type: "integer", description: "Linked project ID (optional)" },
+            receipt_nr: { type: "string", description: "Receipt/reference number (optional)" },
+          },
+          required: ["amount", "expense_date", "description", "account_id", "tax_id", "bank_account_id"],
         },
       },
       required: ["expense_data"],
@@ -212,7 +225,7 @@ export const toolDefinitions: Tool[] = [
   },
   {
     name: "update_expense",
-    description: "Update an existing expense",
+    description: "Update an existing expense (only possible while in draft state in Bexio).",
     annotations: { destructiveHint: false },
     inputSchema: {
       type: "object",
@@ -223,7 +236,19 @@ export const toolDefinitions: Tool[] = [
         },
         expense_data: {
           type: "object",
-          description: "Expense data to update",
+          description: "Partial expense data — only fields that change",
+          properties: {
+            amount: { type: "number", description: "Gross amount incl. tax" },
+            currency_id: { type: "integer", description: "Currency ID (1 = CHF)" },
+            expense_date: { type: "string", description: "Expense date YYYY-MM-DD" },
+            description: { type: "string", description: "Short human-readable description" },
+            account_id: { type: "integer", description: "Chart-of-accounts ID" },
+            tax_id: { type: "integer", description: "Tax ID (list_taxes)" },
+            bank_account_id: { type: "integer", description: "Payment-source bank account ID" },
+            contact_id: { type: "integer", description: "Supplier contact ID" },
+            project_id: { type: "integer", description: "Linked project ID" },
+            receipt_nr: { type: "string", description: "Receipt/reference number" },
+          },
         },
       },
       required: ["expense_id", "expense_data"],
