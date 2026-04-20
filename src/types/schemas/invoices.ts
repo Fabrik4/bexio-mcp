@@ -6,12 +6,21 @@
 import { z } from "zod";
 
 // Invoice position (line item)
+// Structural position types (separators, headers, page breaks) don't need amount/unit_price.
+// Only pricing position types (Custom, Article, Subposition, Discount) require positive values.
+const STRUCTURAL_POSITION_TYPES = [
+  "KbPositionSubtotal",
+  "KbPositionTextBlock",
+  "KbPositionPagebreak",
+  "KbPositionSubtotalPage",
+];
+
 export const InvoicePositionSchema = z
   .object({
     type: z.string().min(1, "Position type is required"),
     text: z.string().min(1, "Description is required"),
-    amount: z.number().positive("Amount must be positive"),
-    unit_price: z.number().positive("Unit price must be positive"),
+    amount: z.number().optional(),
+    unit_price: z.number().optional(),
     discount_in_percent: z.number().min(0).max(100).optional(),
     position_total: z.number().optional(),
     unit_id: z.number().int().positive().optional(),
@@ -22,7 +31,38 @@ export const InvoicePositionSchema = z
     mwst_is_net: z.boolean().optional(),
     map_all: z.boolean().optional(),
   })
-  .passthrough();
+  .passthrough()
+  .superRefine((data, ctx) => {
+    if (STRUCTURAL_POSITION_TYPES.includes(data.type)) {
+      return;
+    }
+    if (data.amount === undefined) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Amount is required for pricing positions",
+        path: ["amount"],
+      });
+    } else if (data.amount <= 0) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Amount must be positive",
+        path: ["amount"],
+      });
+    }
+    if (data.unit_price === undefined) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Unit price is required for pricing positions",
+        path: ["unit_price"],
+      });
+    } else if (data.unit_price <= 0) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Unit price must be positive",
+        path: ["unit_price"],
+      });
+    }
+  });
 
 export type InvoicePosition = z.infer<typeof InvoicePositionSchema>;
 
