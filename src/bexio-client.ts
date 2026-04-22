@@ -573,8 +573,30 @@ export class BexioClient {
     return this.makeRequest("POST", `/kb_offer/${quoteId}/decline`);
   }
 
-  async sendQuote(quoteId: number): Promise<unknown> {
-    return this.makeRequest("POST", `/kb_offer/${quoteId}/send`);
+  async sendQuote(
+    quoteId: number,
+    payload: {
+      recipient_email: string;
+      subject: string;
+      message: string;
+      cc?: string[];
+      bcc?: string[];
+      mark_as_open?: boolean;
+      attach_pdf?: boolean;
+    }
+  ): Promise<unknown> {
+    // Bexio POST /2.0/kb_offer/{id}/send requires recipient_email + subject + message.
+    // Without body returns 422 "Unprocessable Entity".
+    const body: Record<string, unknown> = {
+      recipient_email: payload.recipient_email,
+      subject: payload.subject,
+      message: payload.message,
+      mark_as_open: payload.mark_as_open ?? true,
+      attach_pdf: payload.attach_pdf ?? true,
+    };
+    if (payload.cc?.length) body.cc = payload.cc;
+    if (payload.bcc?.length) body.bcc = payload.bcc;
+    return this.makeRequest("POST", `/kb_offer/${quoteId}/send`, undefined, body);
   }
 
   async createOrderFromQuote(quoteId: number): Promise<unknown> {
@@ -717,8 +739,30 @@ export class BexioClient {
     return this.makeRequest("POST", `/kb_invoice/${invoiceId}/mark_as_sent`);
   }
 
-  async sendInvoice(invoiceId: number): Promise<unknown> {
-    return this.makeRequest("POST", `/kb_invoice/${invoiceId}/send`);
+  async sendInvoice(
+    invoiceId: number,
+    payload: {
+      recipient_email: string;
+      subject: string;
+      message: string;
+      cc?: string[];
+      bcc?: string[];
+      mark_as_open?: boolean;
+      attach_pdf?: boolean;
+    }
+  ): Promise<unknown> {
+    // Bexio POST /2.0/kb_invoice/{id}/send requires recipient_email + subject + message.
+    // Without body returns 422 "Unprocessable Entity".
+    const body: Record<string, unknown> = {
+      recipient_email: payload.recipient_email,
+      subject: payload.subject,
+      message: payload.message,
+      mark_as_open: payload.mark_as_open ?? true,
+      attach_pdf: payload.attach_pdf ?? true,
+    };
+    if (payload.cc?.length) body.cc = payload.cc;
+    if (payload.bcc?.length) body.bcc = payload.bcc;
+    return this.makeRequest("POST", `/kb_invoice/${invoiceId}/send`, undefined, body);
   }
 
   async copyInvoice(invoiceId: number): Promise<unknown> {

@@ -192,6 +192,19 @@ export type MarkInvoiceAsSentParams = z.infer<
 
 export const SendInvoiceParamsSchema = z.object({
   invoice_id: z.number().int().positive(),
+  recipient_email: z.string().email().describe("Primary recipient email"),
+  subject: z.string().min(1).describe("Email subject line"),
+  message: z.string().min(1).describe("Email body (plain text or simple HTML)"),
+  cc: z.array(z.string().email()).optional().describe("Optional CC recipients"),
+  bcc: z.array(z.string().email()).optional().describe("Optional BCC recipients"),
+  mark_as_open: z
+    .boolean()
+    .optional()
+    .describe("Mark invoice as issued/sent after sending (default: true)"),
+  attach_pdf: z
+    .boolean()
+    .optional()
+    .describe("Attach the invoice PDF to the mail (default: true)"),
 });
 
 export type SendInvoiceParams = z.infer<typeof SendInvoiceParamsSchema>;

@@ -144,17 +144,22 @@ export const toolDefinitions: Tool[] = [
   },
   {
     name: "send_quote",
-    description: "Send a quote",
+    description:
+      "Send a quote via Bexio email. Bexio's POST /kb_offer/{id}/send requires recipient_email, subject, and message — without them the API returns 422.",
     annotations: { destructiveHint: false },
     inputSchema: {
       type: "object",
       properties: {
-        quote_id: {
-          type: "integer",
-          description: "The ID of the quote to send",
-        },
+        quote_id: { type: "integer", description: "The ID of the quote to send" },
+        recipient_email: { type: "string", format: "email", description: "Primary recipient email" },
+        subject: { type: "string", description: "Email subject line" },
+        message: { type: "string", description: "Email body (plain text or simple HTML)" },
+        cc: { type: "array", items: { type: "string", format: "email" }, description: "Optional CC recipients" },
+        bcc: { type: "array", items: { type: "string", format: "email" }, description: "Optional BCC recipients" },
+        mark_as_open: { type: "boolean", description: "Mark quote as issued/open after sending (default: true)" },
+        attach_pdf: { type: "boolean", description: "Attach the quote PDF to the mail (default: true)" },
       },
-      required: ["quote_id"],
+      required: ["quote_id", "recipient_email", "subject", "message"],
     },
   },
   {
@@ -189,7 +194,8 @@ export const toolDefinitions: Tool[] = [
   },
   {
     name: "edit_quote",
-    description: "Edit/update an existing quote",
+    description:
+      "Edit/update an existing quote. Accepts any field from the Bexio kb_offer schema — common fields documented below, additional fields pass through.",
     annotations: { destructiveHint: false },
     inputSchema: {
       type: "object",
@@ -200,7 +206,37 @@ export const toolDefinitions: Tool[] = [
         },
         quote_data: {
           type: "object",
-          description: "Fields to update on the quote",
+          description: "Fields to update on the quote (any Bexio kb_offer field).",
+          additionalProperties: true,
+          properties: {
+            title: { type: "string" },
+            contact_id: { type: "integer" },
+            contact_sub_id: { type: "integer" },
+            user_id: { type: "integer" },
+            pr_project_id: { type: "integer" },
+            language_id: { type: "integer" },
+            bank_account_id: { type: "integer" },
+            currency_id: { type: "integer" },
+            payment_type_id: { type: "integer" },
+            header: { type: "string" },
+            footer: { type: "string" },
+            reference: { type: "string" },
+            mwst_type: { type: "integer" },
+            mwst_is_net: { type: "boolean" },
+            show_position_taxes: { type: "boolean" },
+            is_valid_from: { type: "string" },
+            is_valid_until: { type: "string" },
+            contact_address: {
+              type: "string",
+              description: "Full postal address block rendered in the PDF header (multi-line). Overrides the resolved contact default.",
+            },
+            positions: {
+              type: "array",
+              description: "Complete list of positions — replaces all existing positions when provided.",
+              items: { type: "object", additionalProperties: true },
+            },
+            template_slug: { type: "string" },
+          },
         },
       },
       required: ["quote_id", "quote_data"],

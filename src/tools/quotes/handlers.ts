@@ -91,19 +91,20 @@ export const handlers: Record<string, HandlerFn> = {
 
   issue_quote: async (client, args) => {
     const { quote_id } = IssueQuoteParamsSchema.parse(args);
-    // Pre-check: only draft quotes (kb_item_status_id=7) can be issued.
+    // Pre-check: only draft quotes can be issued.
+    // Bexio Quote kb_item_status_id enum (verified 2026-04-22):
+    //   1=draft, 2=pending/issued, 3=accepted, 4=declined
+    // NOTE: invoices use a different enum (7=draft, 8=sent, ...). Do not confuse.
     const current = (await client.getQuote(quote_id)) as Record<string, unknown> | null;
     if (!current) {
       throw McpError.notFound("Quote", quote_id);
     }
     const statusId = current.kb_item_status_id as number | undefined;
-    if (statusId != null && statusId !== 7) {
+    if (statusId != null && statusId !== 1) {
       const statusLabel =
-        statusId === 8 ? "issued"
-        : statusId === 9 ? "accepted"
-        : statusId === 10 ? "declined"
-        : statusId === 15 ? "archived"
-        : statusId === 21 ? "pending"
+        statusId === 2 ? "pending"
+        : statusId === 3 ? "accepted"
+        : statusId === 4 ? "declined"
         : `status_id=${statusId}`;
       throw McpError.validation(
         `Cannot issue quote ${quote_id} — current status is '${statusLabel}', not 'draft'. Only draft quotes can be issued.`
@@ -123,8 +124,9 @@ export const handlers: Record<string, HandlerFn> = {
   },
 
   send_quote: async (client, args) => {
-    const { quote_id } = SendQuoteParamsSchema.parse(args);
-    return client.sendQuote(quote_id);
+    const params = SendQuoteParamsSchema.parse(args);
+    const { quote_id, ...payload } = params;
+    return client.sendQuote(quote_id, payload);
   },
 
   create_order_from_quote: async (client, args) => {

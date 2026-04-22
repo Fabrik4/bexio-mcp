@@ -156,8 +156,9 @@ export const handlers: Record<string, HandlerFn> = {
   },
 
   send_invoice: async (client, args) => {
-    const { invoice_id } = SendInvoiceParamsSchema.parse(args);
-    return client.sendInvoice(invoice_id);
+    const params = SendInvoiceParamsSchema.parse(args);
+    const { invoice_id, ...payload } = params;
+    return client.sendInvoice(invoice_id, payload);
   },
 
   copy_invoice: async (client, args) => {

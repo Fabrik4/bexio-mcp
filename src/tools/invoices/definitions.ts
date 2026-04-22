@@ -154,12 +154,22 @@ export const toolDefinitions: Tool[] = [
   },
   {
     name: "send_invoice",
-    description: "Send an invoice",
+    description:
+      "Send an invoice via Bexio email. Bexio's POST /kb_invoice/{id}/send requires recipient_email, subject, and message — without them the API returns 422.",
     annotations: { destructiveHint: false },
     inputSchema: {
       type: "object",
-      properties: { invoice_id: { type: "integer", description: "The invoice ID to send" } },
-      required: ["invoice_id"],
+      properties: {
+        invoice_id: { type: "integer", description: "The invoice ID to send" },
+        recipient_email: { type: "string", format: "email", description: "Primary recipient email" },
+        subject: { type: "string", description: "Email subject line" },
+        message: { type: "string", description: "Email body (plain text or simple HTML)" },
+        cc: { type: "array", items: { type: "string", format: "email" }, description: "Optional CC recipients" },
+        bcc: { type: "array", items: { type: "string", format: "email" }, description: "Optional BCC recipients" },
+        mark_as_open: { type: "boolean", description: "Mark invoice as issued/sent after sending (default: true)" },
+        attach_pdf: { type: "boolean", description: "Attach the invoice PDF to the mail (default: true)" },
+      },
+      required: ["invoice_id", "recipient_email", "subject", "message"],
     },
   },
   {
@@ -206,13 +216,48 @@ export const toolDefinitions: Tool[] = [
   },
   {
     name: "edit_invoice",
-    description: "Edit/update an existing invoice",
+    description:
+      "Edit/update an existing invoice. Accepts any field from the Bexio kb_invoice schema — common fields documented below, additional fields are passed through.",
     annotations: { destructiveHint: false },
     inputSchema: {
       type: "object",
       properties: {
         invoice_id: { type: "integer", description: "The ID of the invoice to edit" },
-        invoice_data: { type: "object", description: "Fields to update on the invoice" },
+        invoice_data: {
+          type: "object",
+          description: "Fields to update on the invoice (any Bexio kb_invoice field).",
+          additionalProperties: true,
+          properties: {
+            title: { type: "string" },
+            contact_id: { type: "integer" },
+            contact_sub_id: { type: "integer", description: "Optional contact relation (person within company)" },
+            user_id: { type: "integer" },
+            pr_project_id: { type: "integer", description: "Bexio project linkage" },
+            language_id: { type: "integer" },
+            bank_account_id: { type: "integer" },
+            currency_id: { type: "integer" },
+            payment_type_id: { type: "integer" },
+            header: { type: "string", description: "HTML header text above positions" },
+            footer: { type: "string", description: "HTML footer text below positions" },
+            reference: { type: "string", description: "Customer reference / PO number" },
+            mwst_type: { type: "integer" },
+            mwst_is_net: { type: "boolean" },
+            show_position_taxes: { type: "boolean" },
+            is_valid_from: { type: "string", description: "ISO date (YYYY-MM-DD)" },
+            is_valid_to: { type: "string", description: "ISO date (YYYY-MM-DD)" },
+            contact_address: {
+              type: "string",
+              description: "Full postal address block rendered in the PDF header (multi-line text). Overrides the resolved contact default.",
+            },
+            positions: {
+              type: "array",
+              description: "Complete list of invoice positions (line items). Replaces all existing positions when provided.",
+              items: { type: "object", additionalProperties: true },
+            },
+            template_slug: { type: "string" },
+            kb_terms_of_payment_template_id: { type: "integer" },
+          },
+        },
       },
       required: ["invoice_id", "invoice_data"],
     },
