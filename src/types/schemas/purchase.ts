@@ -35,7 +35,9 @@ export const BillDataSchema = z
       .string()
       .regex(/^\d{4}-\d{2}-\d{2}$/, "due_date must be YYYY-MM-DD"),
     amount_calc: z.number().positive("amount_calc must be positive"),
-    currency: z.string().min(1).default("CHF"),
+    currency_code: z.string().min(1).optional(),
+    exchange_rate: z.number().positive().optional(),
+    base_currency_amount: z.number().positive().optional(),
     supplier_id: z.number().int().positive().nullable().optional(),
     vendor_ref: z.string().nullable().optional(),
     booking_account_id: z.number().int().positive().optional(),
