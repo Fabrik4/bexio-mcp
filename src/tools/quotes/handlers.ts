@@ -120,6 +120,29 @@ export const handlers: Record<string, HandlerFn> = {
 
   decline_quote: async (client, args) => {
     const { quote_id } = DeclineQuoteParamsSchema.parse(args);
+    // Bexio only allows /kb_offer/{id}/decline on ISSUED quotes (status 8).
+    // Draft quotes (status 7) return 422 "not in issued state".
+    // For drafts we flip kb_item_status_id to 4 (declined) directly.
+    const current = (await client.getQuote(quote_id)) as
+      | { kb_item_status_id?: number }
+      | null;
+    if (!current) {
+      throw McpError.notFound("Quote", quote_id);
+    }
+    const status = current.kb_item_status_id;
+    // Status ids: 1=draft (pending), 2=open? Bexio actual: 4=declined,
+    // 7=draft, 8=issued (sent), 9=accepted. Source of truth: list_all_statuses.
+    if (status === 4) {
+      return {
+        success: true,
+        already_declined: true,
+        quote_id,
+      };
+    }
+    if (status === 7 || status === 1) {
+      // Draft — decline endpoint would 422. Edit status directly.
+      return client.editQuote(quote_id, { kb_item_status_id: 4 });
+    }
     return client.declineQuote(quote_id);
   },
 

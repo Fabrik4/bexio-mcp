@@ -162,7 +162,8 @@ export const toolDefinitions: Tool[] = [
   },
   {
     name: "create_additional_address",
-    description: "Create an additional address for a contact",
+    description:
+      "Create an additional address for a contact. IMPORTANT: use separate street_name and house_number fields — the combined 'address' field is rejected by Bexio with 422 'Unexpected extra form field'.",
     annotations: { destructiveHint: false },
     inputSchema: {
       type: "object",
@@ -173,15 +174,27 @@ export const toolDefinitions: Tool[] = [
         },
         address_data: {
           type: "object",
-          description: "The address data",
+          description: "The address data. Use street_name+house_number (not 'address').",
           properties: {
             name: {
               type: "string",
-              description: "Name/label for the address",
+              description: "Name/label for the address (e.g. branch name)",
             },
-            address: {
+            name_addition: {
               type: "string",
-              description: "Street address",
+              description: "Name addition (e.g. c/o, second line of name)",
+            },
+            street_name: {
+              type: "string",
+              description: "Street name WITHOUT house number",
+            },
+            house_number: {
+              type: "string",
+              description: "House number (as string — can contain letters like '5a')",
+            },
+            address_addition: {
+              type: "string",
+              description: "Address addition (e.g. floor, apartment)",
             },
             postcode: {
               type: "string",
@@ -211,7 +224,8 @@ export const toolDefinitions: Tool[] = [
   },
   {
     name: "update_additional_address",
-    description: "Update an additional address for a contact",
+    description:
+      "Update an additional address for a contact. IMPORTANT: use separate street_name and house_number fields — the combined 'address' field is rejected by Bexio with 422.",
     annotations: { destructiveHint: false },
     inputSchema: {
       type: "object",
@@ -226,15 +240,27 @@ export const toolDefinitions: Tool[] = [
         },
         address_data: {
           type: "object",
-          description: "The address data to update",
+          description: "The address data to update. Use street_name+house_number (not 'address').",
           properties: {
             name: {
               type: "string",
-              description: "Name/label for the address",
+              description: "Name/label for the address (e.g. branch name)",
             },
-            address: {
+            name_addition: {
               type: "string",
-              description: "Street address",
+              description: "Name addition (e.g. c/o, second line of name)",
+            },
+            street_name: {
+              type: "string",
+              description: "Street name WITHOUT house number",
+            },
+            house_number: {
+              type: "string",
+              description: "House number (as string — can contain letters like '5a')",
+            },
+            address_addition: {
+              type: "string",
+              description: "Address addition (e.g. floor, apartment)",
             },
             postcode: {
               type: "string",

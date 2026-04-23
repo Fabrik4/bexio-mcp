@@ -58,8 +58,9 @@ export const AcceptQuoteParamsSchema = z.object({
 
 export type AcceptQuoteParams = z.infer<typeof AcceptQuoteParamsSchema>;
 
+// z.coerce so MCP-Clients that send quote_id as string still work.
 export const DeclineQuoteParamsSchema = z.object({
-  quote_id: z.number().int().positive(),
+  quote_id: z.coerce.number().int().positive(),
 });
 
 export type DeclineQuoteParams = z.infer<typeof DeclineQuoteParamsSchema>;

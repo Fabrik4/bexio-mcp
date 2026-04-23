@@ -74,17 +74,28 @@ export const GetAdditionalAddressParamsSchema = z.object({
 export type GetAdditionalAddressParams = z.infer<typeof GetAdditionalAddressParamsSchema>;
 
 // Create additional address
-export const CreateAdditionalAddressParamsSchema = z.object({
-  contact_id: z.number().int().positive(),
-  address_data: z.object({
+// NOTE: Bexio 2.0 /contact/{id}/additional_address erwartet separate
+// street_name + house_number Felder. Das kombinierte "address"-Feld wird mit
+// 422 "Unexpected extra form field" abgelehnt. GET-Response zeigt "address"
+// als auto-gemerktes Feld — aber POST/PUT brauchen die atomaren Felder.
+export const AdditionalAddressDataSchema = z
+  .object({
     name: z.string().optional(),
-    address: z.string().optional(),
+    name_addition: z.string().optional(),
+    street_name: z.string().optional(),
+    house_number: z.string().optional(),
+    address_addition: z.string().optional(),
     postcode: z.string().optional(),
     city: z.string().optional(),
     country_id: z.number().int().positive().optional(),
     subject: z.string().optional(),
     description: z.string().optional(),
-  }),
+  })
+  .passthrough();
+
+export const CreateAdditionalAddressParamsSchema = z.object({
+  contact_id: z.number().int().positive(),
+  address_data: AdditionalAddressDataSchema,
 });
 
 export type CreateAdditionalAddressParams = z.infer<typeof CreateAdditionalAddressParamsSchema>;
@@ -93,15 +104,7 @@ export type CreateAdditionalAddressParams = z.infer<typeof CreateAdditionalAddre
 export const UpdateAdditionalAddressParamsSchema = z.object({
   contact_id: z.number().int().positive(),
   address_id: z.number().int().positive(),
-  address_data: z.object({
-    name: z.string().optional(),
-    address: z.string().optional(),
-    postcode: z.string().optional(),
-    city: z.string().optional(),
-    country_id: z.number().int().positive().optional(),
-    subject: z.string().optional(),
-    description: z.string().optional(),
-  }),
+  address_data: AdditionalAddressDataSchema,
 });
 
 export type UpdateAdditionalAddressParams = z.infer<typeof UpdateAdditionalAddressParamsSchema>;
