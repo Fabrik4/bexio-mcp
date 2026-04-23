@@ -54,9 +54,25 @@ export class BexioClient {
         if (error.response) {
           const status = error.response.status;
           const data = error.response.data;
-          const message =
+          const baseMessage =
             data?.message || data?.error_message || (typeof data === 'string' ? data : JSON.stringify(data)) || error.response.statusText;
-          throw McpError.bexioApi(message, status, {
+          // Flatten Bexio's errors[] / errors{} into the top-level message so the
+          // LLM sees the actual field complaints (e.g. 'Unexpected extra form field
+          // named "positions"') instead of just "The form could not be saved".
+          let errorsDetail = "";
+          if (Array.isArray(data?.errors) && data.errors.length > 0) {
+            errorsDetail = " " + data.errors
+              .map((e: unknown) => typeof e === "string" ? e : JSON.stringify(e))
+              .join(" | ");
+          } else if (data?.errors && typeof data.errors === "object") {
+            errorsDetail = " " + Object.entries(data.errors)
+              .map(([field, msg]) => `${field}: ${Array.isArray(msg) ? msg.join(", ") : msg}`)
+              .join(" | ");
+          }
+          const method = (error.config?.method || "").toUpperCase();
+          const url = error.config?.url || "";
+          const context = url ? ` [${method} ${url}]` : "";
+          throw McpError.bexioApi(`${baseMessage}${errorsDetail}${context}`, status, {
             url: error.config?.url,
             method: error.config?.method,
             response_body: data,
