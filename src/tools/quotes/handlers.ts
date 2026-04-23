@@ -120,9 +120,14 @@ export const handlers: Record<string, HandlerFn> = {
 
   decline_quote: async (client, args) => {
     const { quote_id } = DeclineQuoteParamsSchema.parse(args);
-    // Bexio only allows /kb_offer/{id}/decline on ISSUED quotes (status 8).
-    // Draft quotes (status 7) return 422 "not in issued state".
-    // For drafts we flip kb_item_status_id to 4 (declined) directly.
+    // Bexio only accepts /kb_offer/{id}/decline on ISSUED quotes.
+    // Draft quotes (status 1 or 7) return 422 "not in issued state".
+    // There is no API path to decline a draft directly:
+    //   POST /kb_offer/{id}          -> widget-schema rejects kb_item_status_id
+    //   PUT  /kb_offer/{id}          -> requires every mandatory field + rejects kb_item_status_id
+    //   POST /kb_offer/{id}/reject   -> 422 "not in issued state"
+    //   POST /kb_offer/{id}/decline  -> 422 "not in issued state"
+    // Pre-check the status so the caller gets a clear message + workaround.
     const current = (await client.getQuote(quote_id)) as
       | { kb_item_status_id?: number }
       | null;
@@ -130,8 +135,8 @@ export const handlers: Record<string, HandlerFn> = {
       throw McpError.notFound("Quote", quote_id);
     }
     const status = current.kb_item_status_id;
-    // Status ids: 1=draft (pending), 2=open? Bexio actual: 4=declined,
-    // 7=draft, 8=issued (sent), 9=accepted. Source of truth: list_all_statuses.
+    // Known status ids: 1 or 7 = draft, 2 = pending (issued/sent), 3 = accepted,
+    // 4 = declined (cancelled). list_all_statuses is the live source of truth.
     if (status === 4) {
       return {
         success: true,
@@ -139,9 +144,13 @@ export const handlers: Record<string, HandlerFn> = {
         quote_id,
       };
     }
-    if (status === 7 || status === 1) {
-      // Draft — decline endpoint would 422. Edit status directly.
-      return client.editQuote(quote_id, { kb_item_status_id: 4 });
+    if (status === 1 || status === 7) {
+      throw McpError.validation(
+        `Quote ${quote_id} is still a DRAFT (status ${status}). Bexio does not expose any API ` +
+          "path to decline a draft: /decline and /reject return 422 'not in issued state', and " +
+          "the edit widget rejects kb_item_status_id. Options: (a) delete_quote to remove the " +
+          "draft entirely, or (b) issue_quote first, then decline_quote on the issued version."
+      );
     }
     return client.declineQuote(quote_id);
   },
